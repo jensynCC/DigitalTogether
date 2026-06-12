@@ -4,9 +4,37 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DigitalTogether – Plattform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body class="app-shell">
+
+<!-- ===== Login Overlay ===== -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <a class="brand" href="index.html">
+      <span class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
+      <span><b>DigitalTogether</b><small>Wissen verbindet.</small></span>
+    </a>
+    <h2>Willkommen zurück</h2>
+    <p>Melde dich an – wie möchtest du teilnehmen?</p>
+    <div class="role-pick" id="rolePick">
+      <div class="role-opt oldie" data-role="oldie">
+        <div class="r-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/><path d="M19 8v6M16 11h6"/></svg></div>
+        <b>Oldie</b><span>Erfahren – ich lerne digitale Tools</span>
+      </div>
+      <div class="role-opt mentor" data-role="mentor">
+        <div class="r-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7l9 5 9-5-9-5z"/><path d="M3 7v6l9 5 9-5V7"/></svg></div>
+        <b>Mentor</b><span>Digital-affin – ich gebe Wissen weiter</span>
+      </div>
+    </div>
+    <div class="field" style="text-align:left"><label>Dein Name</label><input id="loginName" placeholder="Vor- und Nachname"/></div>
+    <button class="btn btn-primary btn-block" id="loginBtn">Anmelden</button>
+    <p style="margin-top:14px;font-size:.82rem"><a href="index.html">← Zurück zur Startseite</a></p>
+  </div>
+</div>
 
 <!-- Header -->
 <header class="site-header">
@@ -15,8 +43,10 @@
       <span class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
       <span><b>DigitalTogether</b><small>Wissen verbindet.</small></span>
     </a>
-    <div class="nav-links"><a href="index.html">← Zur Startseite</a></div>
-    <span id="whoami" class="trust" style="margin-left:auto;font-size:.9rem"></span>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+      <span id="roleBadge"></span>
+      <button class="btn btn-ghost btn-sm" id="logoutBtn">Abmelden</button>
+    </div>
   </div>
 </header>
 
@@ -25,8 +55,8 @@
     <div class="crumb">Plattform · Reverse Mentoring</div>
     <div class="page-head">
       <div>
-        <h1>Mein Mentoring-Bereich</h1>
-        <p>Profil pflegen, Match finden, Treffen planen und Fortschritt festhalten.</p>
+        <h1 id="pageTitle">Mein Mentoring-Bereich</h1>
+        <p id="pageSub">Profil pflegen, Match finden, Treffen planen und Fortschritt festhalten.</p>
       </div>
       <button class="btn btn-ghost btn-sm" id="resetBtn" title="Alle lokalen Daten löschen">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
@@ -36,11 +66,12 @@
 
     <!-- Tabs -->
     <div class="tabs" id="tabs">
-      <button class="tab active" data-tab="profil"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profil</button>
-      <button class="tab" data-tab="matching"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg> Matching</button>
+      <button class="tab active" data-tab="profil"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <span data-label="profil">Profil</span></button>
+      <button class="tab" data-tab="matching"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg> <span data-label="matching">Matching</span></button>
       <button class="tab" data-tab="treffen"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Treffen <span class="badge-count" id="cntTreffen">0</span></button>
       <button class="tab" data-tab="austausch"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> Wissensaustausch</button>
       <button class="tab" data-tab="feedback"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Feedback</button>
+      <button class="tab" data-tab="auswertung"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="7"/><rect x="13" y="6" width="3" height="11"/></svg> Feedback-Auswertung</button>
       <button class="tab" data-tab="ergebnisse"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg> Ergebnisse &amp; Tracking</button>
     </div>
 
@@ -48,8 +79,8 @@
     <section class="panel active" id="panel-profil">
       <div class="grid-2">
         <div class="card">
-          <h3>Anmeldung &amp; Profil</h3>
-          <p class="sub">Erzähl uns von dir – darauf baut das Matching auf.</p>
+          <h3 id="profileFormTitle">Anmeldung &amp; Profil</h3>
+          <p class="sub" id="profileFormSub">Erzähl uns von dir – darauf baut das Matching auf.</p>
           <form id="profileForm" style="margin-top:18px">
             <div class="field"><label>Name</label><input name="name" required placeholder="z. B. Renate Hoffmann"/></div>
             <div class="grid-2" style="gap:14px">
@@ -59,15 +90,7 @@
             <div class="field"><label>E-Mail (optional)</label><input name="email" type="email" placeholder="name@firma.de"/></div>
 
             <div class="field">
-              <label>Ich nehme teil als</label>
-              <select name="role">
-                <option value="mentee">Mentee – ich möchte digitale Kompetenzen aufbauen (erfahrene:r Mitarbeitende:r)</option>
-                <option value="mentor">Mentor:in – ich gebe digitales Wissen weiter</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label>Worüber möchtest du gern lernen? (Lernwünsche)</label>
+              <label id="topicLabel">Worüber möchtest du gern lernen? (Lernwünsche)</label>
               <div class="chips" id="topicChips"></div>
               <div class="hint">Wähle alle passenden Themen aus.</div>
             </div>
@@ -86,9 +109,9 @@
               </div>
             </div>
 
-            <div class="field"><label>Dein Ziel in einem Satz</label><textarea name="goal" placeholder="z. B. Ich möchte sicher mit Videokonferenzen und unserem Team-Chat umgehen."></textarea></div>
+            <div class="field"><label id="goalLabel">Dein Ziel in einem Satz</label><textarea name="goal" placeholder="z. B. Ich möchte sicher mit Videokonferenzen und unserem Team-Chat umgehen."></textarea></div>
 
-            <button class="btn btn-primary btn-block" type="submit">Profil speichern &amp; Matching starten</button>
+            <button class="btn btn-primary btn-block" type="submit" id="profileSubmit">Profil speichern &amp; Matching starten</button>
           </form>
         </div>
 
@@ -98,8 +121,8 @@
             <h3>So geht's weiter</h3>
             <ul class="timeline" style="margin-top:14px">
               <li><b>Profil erstellen</b><div class="t-date">Stärken &amp; Lernwünsche angeben</div></li>
-              <li><b>Match erhalten</b><div class="t-date">Passende:n Mentor:in auswählen</div></li>
-              <li><b>Treffen vereinbaren</b><div class="t-date">Termin &amp; Format festlegen</div></li>
+              <li><b>Match erhalten</b><div class="t-date">Passende:s Tandem auswählen</div></li>
+              <li><b>Treffen vereinbaren</b><div class="t-date">Einzel- oder Regeltermine festlegen</div></li>
               <li><b>Wissen austauschen</b><div class="t-date">Themen gemeinsam bearbeiten</div></li>
               <li><b>Feedback &amp; Ergebnisse</b><div class="t-date">Fortschritt festhalten</div></li>
             </ul>
@@ -112,7 +135,7 @@
     <section class="panel" id="panel-matching">
       <div class="card">
         <div class="row-between">
-          <div><h3>Dein Matching</h3><p class="sub" style="margin:0">Auf Basis deiner Lernwünsche, Stärken und Verfügbarkeit.</p></div>
+          <div><h3 id="matchTitle">Dein Matching</h3><p class="sub" id="matchSub" style="margin:0">Auf Basis deiner Lernwünsche, Stärken und Verfügbarkeit.</p></div>
           <button class="btn btn-outline btn-sm" id="rematchBtn">Neu berechnen</button>
         </div>
         <div id="matchList" style="margin-top:20px"></div>
@@ -124,16 +147,29 @@
       <div class="grid-2">
         <div class="card">
           <h3>Treffen vereinbaren</h3>
-          <p class="sub">Plane ein Reverse-Mentoring-Treffen mit deinem Tandem.</p>
+          <p class="sub">Einzeltermin oder wiederkehrender Regeltermin mit deinem Tandem.</p>
           <form id="meetingForm" style="margin-top:16px">
             <div class="field"><label>Mit</label><select name="partner" id="meetingPartner"></select></div>
             <div class="grid-2" style="gap:14px">
-              <div class="field"><label>Datum</label><input type="date" name="date" required/></div>
+              <div class="field"><label>Startdatum</label><input type="date" name="date" required/></div>
               <div class="field"><label>Uhrzeit</label><input type="time" name="time" required/></div>
             </div>
             <div class="grid-2" style="gap:14px">
               <div class="field"><label>Format</label><select name="format"><option>Persönlich vor Ort</option><option>Video-Call</option><option>Telefon</option></select></div>
               <div class="field"><label>Dauer</label><select name="duration"><option>30 Min</option><option>45 Min</option><option>60 Min</option></select></div>
+            </div>
+            <div class="grid-2" style="gap:14px">
+              <div class="field"><label>Wiederholung</label>
+                <select name="recurrence" id="recurrenceSel">
+                  <option value="none">Einmalig</option>
+                  <option value="weekly">Wöchentlich</option>
+                  <option value="biweekly">Alle 2 Wochen</option>
+                  <option value="monthly">Monatlich</option>
+                </select>
+              </div>
+              <div class="field" id="occField" style="display:none"><label>Anzahl Termine</label>
+                <select name="occurrences"><option>4</option><option>6</option><option>8</option><option>10</option><option>12</option></select>
+              </div>
             </div>
             <div class="field"><label>Thema des Treffens</label><input name="topic" placeholder="z. B. Videokonferenzen sicher nutzen"/></div>
             <button class="btn btn-primary btn-block" type="submit">Treffen eintragen</button>
@@ -154,13 +190,13 @@
           <p class="sub">Halte fest, was ihr gemeinsam bearbeitet – beide Seiten lernen.</p>
           <form id="topicForm" style="margin-top:16px">
             <div class="field"><label>Thema / Kompetenz</label><input name="title" required placeholder="z. B. Digitale Signaturen"/></div>
-            <div class="field"><label>Richtung</label><select name="direction"><option value="mentee">Ich lerne (von Mentor:in)</option><option value="mentor">Ich gebe weiter (an Mentor:in)</option></select></div>
+            <div class="field"><label>Richtung</label><select name="direction"><option value="mentee">Oldie lernt (von Mentor)</option><option value="mentor">Oldie gibt weiter (an Mentor)</option></select></div>
             <div class="field"><label>Notizen / nächste Schritte</label><textarea name="notes" placeholder="Was wurde geübt? Was ist offen?"></textarea></div>
             <button class="btn btn-primary btn-block" type="submit">Lernthema hinzufügen</button>
           </form>
         </div>
         <div class="card">
-          <h3>Mein Lernpfad</h3>
+          <h3>Gemeinsamer Lernpfad</h3>
           <div id="topicList" style="margin-top:14px"></div>
         </div>
       </div>
@@ -192,13 +228,33 @@
       </div>
     </section>
 
+    <!-- ===== FEEDBACK-AUSWERTUNG ===== -->
+    <section class="panel" id="panel-auswertung">
+      <div class="grid-3" id="fbStatRow" style="margin-bottom:22px"></div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Bewertungsverteilung</h3>
+          <p class="sub">Wie verteilen sich alle abgegebenen Sterne-Bewertungen?</p>
+          <div id="distChart" style="margin-top:18px"></div>
+        </div>
+        <div class="card">
+          <h3>Auswertung nach Perspektive</h3>
+          <p class="sub">Durchschnitt getrennt nach Oldie- und Mentor-Feedback.</p>
+          <div id="byRole" style="margin-top:18px"></div>
+          <div class="divider"></div>
+          <h4 style="margin-bottom:8px">Häufige Verbesserungswünsche</h4>
+          <div id="improveThemes"></div>
+        </div>
+      </div>
+    </section>
+
     <!-- ===== ERGEBNISSE ===== -->
     <section class="panel" id="panel-ergebnisse">
       <div class="grid-3" id="statRow" style="margin-bottom:22px"></div>
       <div class="grid-2">
         <div class="card">
           <h3>Lernfortschritt</h3>
-          <p class="sub">Status deiner Lernthemen.</p>
+          <p class="sub">Status der Lernthemen.</p>
           <div id="progressList" style="margin-top:16px"></div>
         </div>
         <div class="card">

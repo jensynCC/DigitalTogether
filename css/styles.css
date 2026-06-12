@@ -1,17 +1,18 @@
 /* ===== DigitalTogether – Reverse Mentoring Plattform ===== */
 :root {
-  --green: #1f7a63;
-  --green-dark: #1a5f4e;
-  --green-light: #e7f1ed;
-  --green-soft: #d4e7df;
-  --blue: #2f5fb0;
-  --blue-light: #e6eef9;
-  --ink: #15211d;
-  --text: #2b3a35;
-  --muted: #5f6f6a;
+  /* Große Elemente: #042c58 · Kleine Elemente / Boxen: #6ab2e7 */
+  --green: #042c58;        /* primär / große Elemente */
+  --green-dark: #021d3b;   /* hover */
+  --green-light: #e7f2fb;  /* helle Box-Tönung */
+  --green-soft: #cfe6f8;
+  --blue: #6ab2e7;         /* kleine Elemente / Akzent-Boxen */
+  --blue-light: #e7f2fb;
+  --ink: #042c58;
+  --text: #2b3a45;
+  --muted: #5f6f7e;
   --bg: #ffffff;
-  --bg-cream: #faf6ee;
-  --line: #e3e8e6;
+  --bg-cream: #eef5fb;
+  --line: #dde6ef;
   --card: #ffffff;
   --radius: 16px;
   --shadow: 0 10px 30px rgba(20, 50, 40, .08);
@@ -23,7 +24,7 @@
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: "Red Hat Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: var(--text);
   background: var(--bg);
   line-height: 1.55;
@@ -280,6 +281,52 @@ img { max-width: 100%; display: block; }
 .timeline .t-date { font-size: .8rem; color: var(--muted); }
 
 .row-between { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+/* ===== Login overlay ===== */
+.login-overlay {
+  position: fixed; inset: 0; z-index: 200; display: grid; place-items: center;
+  background: linear-gradient(160deg, #042c58, #063e78);
+  padding: 24px;
+}
+.login-card {
+  background: #fff; border-radius: 22px; box-shadow: var(--shadow);
+  width: 100%; max-width: 460px; padding: 38px 34px; text-align: center;
+}
+.login-card .brand { justify-content: center; margin-bottom: 8px; }
+.login-card h2 { font-size: 1.5rem; margin-top: 14px; }
+.login-card p { color: var(--muted); }
+.role-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 22px 0 18px; }
+.role-opt {
+  border: 2px solid var(--line); border-radius: 16px; padding: 22px 14px; cursor: pointer;
+  transition: .15s; background: #fff;
+}
+.role-opt:hover { border-color: var(--blue); }
+.role-opt.sel { border-color: var(--green); background: var(--green-light); }
+.role-opt .r-ico { width: 56px; height: 56px; border-radius: 14px; margin: 0 auto 12px; display: grid; place-items: center; color: #fff; }
+.role-opt.oldie .r-ico { background: var(--green); }
+.role-opt.mentor .r-ico { background: var(--blue); }
+.role-opt b { display: block; color: var(--ink); }
+.role-opt span { font-size: .82rem; color: var(--muted); }
+
+.role-badge { display: inline-flex; align-items: center; gap: 7px; padding: 6px 13px; border-radius: 20px; font-weight: 700; font-size: .85rem; }
+.role-badge.oldie { background: var(--green-light); color: var(--green); }
+.role-badge.mentor { background: #e7f2fb; color: #1c6aa8; }
+
+/* Recurrence badge */
+.recur-badge { background: #fff4e0; color: #a76a00; font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+.series-head { font-weight: 700; color: var(--ink); margin: 18px 0 8px; display: flex; align-items: center; gap: 8px; }
+
+/* Feedback evaluation bars */
+.dist-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.dist-row .lbl { width: 54px; font-size: .88rem; color: var(--muted); white-space: nowrap; }
+.dist-bar { flex: 1; background: var(--green-light); border-radius: 20px; height: 22px; overflow: hidden; }
+.dist-bar > span { display: block; height: 100%; background: var(--blue); border-radius: 20px; transition: width .4s; min-width: 2px; }
+.dist-row .val { width: 30px; text-align: right; font-weight: 700; color: var(--ink); }
+.big-score { display: flex; align-items: baseline; gap: 8px; }
+.big-score .n { font-size: 3rem; font-weight: 800; color: var(--green); line-height: 1; }
+.big-score .o { font-size: 1.2rem; color: var(--blue); }
+
+.hide { display: none !important; }
 
 /* Responsive */
 @media (max-width: 880px) {
