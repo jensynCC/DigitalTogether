@@ -1,4 +1,4 @@
-/* ===== DigitalTogether – Reverse Mentoring App Logic ===== */
+/* ===== DigitalTogether – Relational Mentoring App Logic ===== */
 /* Alle Daten werden lokal im Browser (localStorage) gespeichert. */
 
 const KEY = 'digitaltogether_v2';
