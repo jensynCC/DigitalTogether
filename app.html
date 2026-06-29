@@ -47,8 +47,9 @@
       <span class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
       <span><b>DigitalTogether</b><small>Wissen verbindet.</small></span>
     </a>
-    <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+    <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
       <span id="roleBadge"></span>
+      <button class="btn btn-outline btn-sm" id="switchRoleBtn" style="display:none"></button>
       <button class="btn btn-ghost btn-sm" id="logoutBtn">Abmelden</button>
     </div>
   </div>
@@ -68,6 +69,9 @@
       </button>
     </div>
 
+    <!-- In-App-Benachrichtigungen -->
+    <div id="noticeBar" style="display:none"></div>
+
     <!-- Tabs -->
     <div class="tabs" id="tabs">
       <button class="tab" data-tab="hrtracking"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg> Ergebnis-Tracking</button>
@@ -82,79 +86,91 @@
 
     <!-- ===== PROFIL ===== -->
     <section class="panel active" id="panel-profil">
-      <div class="grid-2">
-        <div class="card">
-          <h3 id="profileFormTitle">Anmeldung &amp; Profil</h3>
-          <p class="sub" id="profileFormSub">Erzähl uns von dir – darauf baut das Matching auf.</p>
-          <form id="profileForm" style="margin-top:18px">
-            <div class="field"><label>Name</label><input name="name" required placeholder="z. B. Renate Hoffmann"/></div>
-            <div class="grid-2" style="gap:14px">
-              <div class="field"><label>Abteilung</label><input name="department" placeholder="z. B. Vertrieb"/></div>
-              <div class="field"><label>Rolle / Position</label><input name="position" placeholder="z. B. Teamleitung"/></div>
-            </div>
-            <div class="field"><label>E-Mail (optional)</label><input name="email" type="email" placeholder="name@firma.de"/></div>
-
-            <div class="field">
-              <label id="topicLabel">Worüber möchtest du gern lernen? (Lernwünsche)</label>
-              <div class="chips" id="topicChips"></div>
-              <div class="hint" id="topicHint">Wähle alle passenden Themen aus.</div>
-            </div>
-
-            <div class="field" id="expField">
-              <label id="expLabel">Welches Erfahrungswissen gibst du weiter?</label>
-              <div class="chips" id="expChips"></div>
-              <div class="hint" id="expHint">Relational Mentoring lebt vom Austausch in beide Richtungen.</div>
-            </div>
-
-            <div class="field">
-              <label>Deine Stärken, die du einbringst</label>
-              <div class="chips" id="strengthChips"></div>
-            </div>
-
-            <div class="grid-2" style="gap:14px">
-              <div class="field"><label>Bevorzugtes Format</label>
-                <select name="format"><option>Persönlich vor Ort</option><option>Video-Call</option><option>Telefon</option><option>Flexibel</option></select>
+      <div class="card">
+        <h3 id="profileFormTitle">Anmeldung &amp; Profil</h3>
+        <p class="sub" id="profileFormSub">Erzähl uns von dir – darauf baut das Matching auf.</p>
+        <form id="profileForm" style="margin-top:18px">
+          <div class="profile-cols">
+            <!-- Fachliches Profil -->
+            <div class="prof-col prof-col-main">
+              <div class="col-head"><span class="col-dot"></span>Fachliches Profil</div>
+              <div class="field"><label>Name</label><input name="name" required placeholder="z. B. Renate Hoffmann"/></div>
+              <div class="grid-2" style="gap:14px">
+                <div class="field"><label>Abteilung</label><input name="department" placeholder="z. B. Vertrieb"/></div>
+                <div class="field"><label>Rolle / Position</label><input name="position" placeholder="z. B. Teamleitung"/></div>
               </div>
-              <div class="field"><label>Verfügbarkeit</label>
-                <select name="availability"><option>Vormittags</option><option>Nachmittags</option><option>Flexibel</option></select>
+              <div class="field"><label>E-Mail (optional)</label><input name="email" type="email" placeholder="name@firma.de"/></div>
+              <div class="field">
+                <label id="topicLabel">Worüber möchtest du gern lernen? (Lernwünsche)</label>
+                <div class="chips" id="topicChips"></div>
+                <div class="hint" id="topicHint">Wähle alle passenden Themen aus.</div>
               </div>
+              <div class="field" id="expField">
+                <label id="expLabel">Welches Erfahrungswissen gibst du weiter?</label>
+                <div class="chips" id="expChips"></div>
+                <div class="hint" id="expHint">Relational Mentoring lebt vom Austausch in beide Richtungen.</div>
+              </div>
+              <div class="field">
+                <label>Deine Stärken, die du einbringst</label>
+                <div class="chips" id="strengthChips"></div>
+              </div>
+              <div class="grid-2" style="gap:14px">
+                <div class="field"><label>Bevorzugtes Format</label>
+                  <select name="format"><option>Persönlich vor Ort</option><option>Video-Call</option><option>Telefon</option><option>Flexibel</option></select>
+                </div>
+                <div class="field"><label>Verfügbarkeit</label>
+                  <select name="availability"><option>Vormittags</option><option>Nachmittags</option><option>Flexibel</option></select>
+                </div>
+              </div>
+              <div class="field"><label id="goalLabel">Dein Ziel in einem Satz</label><textarea name="goal" placeholder="z. B. Ich möchte sicher mit Videokonferenzen und unserem Team-Chat umgehen."></textarea></div>
             </div>
 
-            <div class="form-section-label">Über dich <span>– hilft uns, menschlich gut zu matchen</span></div>
-            <div class="field"><label>Hobbys &amp; Interessen</label><input name="hobbies" placeholder="z. B. Wandern, Kochen, Fotografie, Vereinsarbeit"/></div>
-            <div class="grid-2" style="gap:14px">
+            <!-- Über dich -->
+            <div class="prof-col prof-col-about">
+              <div class="col-head"><span class="col-dot blue"></span>Über dich</div>
+              <p class="col-note">Persönliches für die Gemeinsamkeiten &amp; Gesprächsanlässe im Tandem – fließt mit ins Matching.</p>
+              <div class="field">
+                <label>Interessen &amp; Hobbys</label>
+                <div class="chips" id="interestChips"></div>
+                <div class="hint">Auswahl statt Freitext – so finden wir Gemeinsamkeiten.</div>
+              </div>
+              <div class="field"><label>Nächstes Reiseziel</label>
+                <select name="nextTravel" id="travelSel"></select>
+              </div>
               <div class="field"><label>Arbeitsstil</label>
                 <select name="workStyle" id="workStyleSel"></select>
               </div>
               <div class="field"><label>Kommunikationsstil</label>
                 <select name="commStyle" id="commStyleSel"></select>
               </div>
+              <input type="hidden" name="hobbies"/>
             </div>
-
-            <div class="field"><label id="goalLabel">Dein Ziel in einem Satz</label><textarea name="goal" placeholder="z. B. Ich möchte sicher mit Videokonferenzen und unserem Team-Chat umgehen."></textarea></div>
-
-            <button class="btn btn-primary btn-block" type="submit" id="profileSubmit">Profil speichern &amp; Matching starten</button>
-          </form>
-        </div>
-
-        <div>
-          <div class="card" id="profileSummary" style="display:none"></div>
-          <div class="card">
-            <h3>So geht's weiter</h3>
-            <ul class="timeline" style="margin-top:14px">
-              <li><b>Profil erstellen</b><div class="t-date">Stärken &amp; Lernwünsche angeben</div></li>
-              <li><b>Match erhalten</b><div class="t-date">Passende:s Tandem auswählen</div></li>
-              <li><b>Treffen vereinbaren</b><div class="t-date">Einzel- oder Regeltermine festlegen</div></li>
-              <li><b>Wissen austauschen</b><div class="t-date">Themen gemeinsam bearbeiten</div></li>
-              <li><b>Reflektieren &amp; Ergebnisse</b><div class="t-date">Lernjournal führen, Fortschritt festhalten</div></li>
-            </ul>
           </div>
+
+          <button class="btn btn-primary btn-block" type="submit" id="profileSubmit" style="margin-top:8px">Profil speichern &amp; Matching starten</button>
+        </form>
+      </div>
+
+      <div class="grid-2" style="margin-top:22px">
+        <div class="card" id="profileSummary" style="display:none"></div>
+        <div class="card">
+          <h3>So geht's weiter</h3>
+          <ul class="timeline" style="margin-top:14px">
+            <li><b>Profil erstellen</b><div class="t-date">Fachliches &amp; Über dich angeben</div></li>
+            <li><b>Match erhalten</b><div class="t-date">HR ordnet dein Tandem zu (Wunsch möglich)</div></li>
+            <li><b>Treffen vereinbaren</b><div class="t-date">Einzel- oder Regeltermine festlegen</div></li>
+            <li><b>Wissen austauschen</b><div class="t-date">Themen gemeinsam bearbeiten</div></li>
+            <li><b>Reflektieren &amp; Ergebnisse</b><div class="t-date">Lernjournal führen, Fortschritt festhalten</div></li>
+          </ul>
         </div>
       </div>
     </section>
 
-    <!-- ===== MATCHING ===== -->
+    <!-- ===== MATCH ===== -->
     <section class="panel" id="panel-matching">
+      <!-- Zugeordnetes Match (von HR) -->
+      <div class="card match-card" id="matchCard" style="display:none"></div>
+
       <div class="card intake-card" id="intakeCard">
         <div class="row-between">
           <div><h3>Kurze Einschätzung vor dem Matching</h3><p class="sub" style="margin:0">Damit wir dich passend zuordnen – dauert unter einer Minute.</p></div>
@@ -185,13 +201,17 @@
         </form>
       </div>
 
-      <div class="card">
+      <div class="card" id="suggestCard">
         <div class="row-between">
-          <div><h3 id="matchTitle">Dein Matching</h3><p class="sub" id="matchSub" style="margin:0">Auf Basis deiner Lernwünsche, Stärken und Verfügbarkeit.</p></div>
+          <div><h3 id="matchTitle">Vorschläge für dein Match</h3><p class="sub" id="matchSub" style="margin:0">Auf Basis deiner Lernwünsche, Stärken, Präferenzen und Verfügbarkeit.</p></div>
           <button class="btn btn-outline btn-sm" id="rematchBtn">Neu berechnen</button>
         </div>
-        <div id="matchList" style="margin-top:20px"></div>
+        <p class="hint" style="margin-top:6px">Die finale Zuordnung trifft HR. Du kannst hier deinen <b>Wunsch</b> markieren – HR berücksichtigt ihn.</p>
+        <div id="matchList" style="margin-top:16px"></div>
       </div>
+
+      <!-- Hilfe & Kontakt -->
+      <div class="card help-card" id="helpCard"></div>
     </section>
 
     <!-- ===== TREFFEN ===== -->
@@ -384,6 +404,18 @@
           <button class="btn btn-primary btn-block" type="submit">Event speichern &amp; auf Startseite veröffentlichen</button>
         </form>
         <div id="eventPreview" style="margin-top:14px"></div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h3>Matchmaker – Tandems zuordnen</h3>
+        <p class="sub">Du triffst die finale Zuordnung auf Basis der Matching-Faktoren. Wünsche der Teilnehmenden sind markiert; nach dem Zuweisen werden die Beteiligten benachrichtigt.</p>
+        <div id="matchmaker" style="margin-top:16px"></div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h3>Aufgelöste Matches <span style="font-weight:400;font-size:.85rem;color:var(--muted)">– vertraulich</span></h3>
+        <p class="sub">Auflösungsgründe der Teilnehmenden sind ausschließlich hier für HR sichtbar.</p>
+        <div id="dissolvedList" style="margin-top:14px"></div>
       </div>
       <div class="grid-4" id="hrKpiRow" style="margin:22px 0"></div>
       <div class="grid-2">

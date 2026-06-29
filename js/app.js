@@ -33,6 +33,21 @@ const COMM_STYLES = [
 ];
 /* Faktoren, die Teilnehmende beim Matching priorisieren können */
 const MATCH_FACTORS = ['Themen-Übereinstimmung', 'Arbeitsstil', 'Kommunikationsstil', 'Verfügbarkeit & Format'];
+/* Interessen/Hobbys als Auswahl – liefern Gemeinsamkeiten als Gesprächsanlässe */
+const INTERESTS = [
+  'Wandern & Natur', 'Kochen & Backen', 'Lesen', 'Musik & Konzerte', 'Sport & Fitness',
+  'Reisen', 'Fotografie', 'Gaming', 'Gartenarbeit', 'Ehrenamt',
+  'Kunst & Kultur', 'Familie', 'Heimwerken', 'Yoga & Achtsamkeit', 'Kino & Serien', 'Radfahren'
+];
+const TRAVEL_DESTINATIONS = [
+  '–', 'Italien', 'Spanien', 'Skandinavien', 'Asien', 'Nordamerika',
+  'Roadtrip / Fernwanderung', 'Städtetrip Europa', 'Strandurlaub', 'Staycation / Zuhause'
+];
+/* Statischer HR-Kontakt für den Hilfe-Bereich */
+const HR_CONTACT = {
+  name: 'Sandra Keller', role: 'HR Business Partner · Relational Mentoring',
+  email: 'mentoring@firma.de', phone: '+49 30 1234-567'
+};
 
 /* Demo-Mentor:innen-Pool für das Matching (Oldie-Sicht).
    teaches = digitale Themen (Mentor → Oldie), expTopics = Erfahrungswissen, das der Mentor lernen möchte (Oldie → Mentor) */
@@ -41,22 +56,26 @@ const MENTOR_POOL = [
     teaches:['Videokonferenzen','Team-Chat & Messenger','KI-Tools','Online-Sicherheit'],
     expTopics:['Branchen- & Fachwissen','Kundenbeziehungen & Netzwerk'],
     strengths:['Digitale Affinität','Geduld'], format:'Video-Call', availability:'Nachmittags',
-    workStyle:'Flexibel & spontan', commStyle:'Direkt & sachlich' },
+    workStyle:'Flexibel & spontan', commStyle:'Direkt & sachlich',
+    interests:['Gaming','Sport & Fitness','Kino & Serien'], nextTravel:'Asien' },
   { id:'m2', name:'Lena Vogt', position:'Junior Marketing', dept:'Marketing',
     teaches:['Social Media','Smartphone-Apps','Cloud & Dateien teilen','KI-Tools'],
     expTopics:['Verhandlung & Gesprächsführung','Unternehmensgeschichte & Kultur'],
     strengths:['Kreativität','Digitale Affinität'], format:'Persönlich vor Ort', availability:'Vormittags',
-    workStyle:'Teamorientiert', commStyle:'Persönlich & einfühlsam' },
+    workStyle:'Teamorientiert', commStyle:'Persönlich & einfühlsam',
+    interests:['Fotografie','Reisen','Kunst & Kultur'], nextTravel:'Städtetrip Europa' },
   { id:'m3', name:'Ali Demir', position:'Auszubildender', dept:'Vertrieb',
     teaches:['E-Mail & Kalender','Office / Tabellen','Digitale Signaturen','Cloud & Dateien teilen'],
     expTopics:['Strukturierte Arbeitsweise','Berufliche Orientierung'],
     strengths:['Geduld','Strukturierte Arbeitsweise'], format:'Flexibel', availability:'Flexibel',
-    workStyle:'Strukturiert & planvoll', commStyle:'Ausführlich & erklärend' },
+    workStyle:'Strukturiert & planvoll', commStyle:'Ausführlich & erklärend',
+    interests:['Radfahren','Kochen & Backen','Gaming'], nextTravel:'Italien' },
   { id:'m4', name:'Sophie Klein', position:'Trainee', dept:'HR',
     teaches:['Online-Sicherheit','E-Mail & Kalender','Smartphone-Apps','Videokonferenzen'],
     expTopics:['Konfliktlösung','Entscheidungsfindung','Gelassenheit & Resilienz'],
     strengths:['Geduld','Mentoring-Erfahrung'], format:'Video-Call', availability:'Vormittags',
-    workStyle:'Detailorientiert', commStyle:'Persönlich & einfühlsam' }
+    workStyle:'Detailorientiert', commStyle:'Persönlich & einfühlsam',
+    interests:['Yoga & Achtsamkeit','Lesen','Wandern & Natur'], nextTravel:'Skandinavien' }
 ];
 
 /* Demo-Mentees für die Mentor-Sicht.
@@ -66,12 +85,14 @@ const MENTEE_POOL = [
     topics:['Videokonferenzen','Online-Sicherheit','Team-Chat & Messenger'],
     expTopics:['Kundenbeziehungen & Netzwerk','Verhandlung & Gesprächsführung','Branchen- & Fachwissen'],
     format:'Persönlich vor Ort', availability:'Vormittags', goal:'Sicher mit Videokonferenzen umgehen.',
-    workStyle:'Strukturiert & planvoll', commStyle:'Persönlich & einfühlsam' },
+    workStyle:'Strukturiert & planvoll', commStyle:'Persönlich & einfühlsam',
+    interests:['Wandern & Natur','Lesen','Musik & Konzerte'], nextTravel:'Italien' },
   { id:'e2', name:'Werner Krause', position:'Sachbearbeiter', dept:'Buchhaltung',
     topics:['Office / Tabellen','Cloud & Dateien teilen','Digitale Signaturen'],
     expTopics:['Strukturierte Arbeitsweise','Prozess- & Abläufe-Know-how'],
     format:'Video-Call', availability:'Nachmittags', goal:'Rechnungen digital signieren und ablegen.',
-    workStyle:'Detailorientiert', commStyle:'Ausführlich & erklärend' }
+    workStyle:'Detailorientiert', commStyle:'Ausführlich & erklärend',
+    interests:['Gartenarbeit','Heimwerken','Radfahren'], nextTravel:'Staycation / Zuhause' }
 ];
 
 /* Demo-Programmdaten für die HR-Auswertung (mehrere Tandems im Unternehmen).
@@ -102,8 +123,14 @@ const blank = {
   session: null,                 // { role:'oldie'|'mentor', name }
   menteeProfile: null,           // Profil des Oldies
   mentorProfile: null,           // Profil des Mentors
-  mentorId: null,                // vom Oldie gewähltes Tandem
-  menteeId: null,                // vom Mentor gewähltes Tandem
+  mentorId: null,                // dem Mentee zugeordnetes Tandem (final)
+  menteeId: null,                // dem Mentor zugeordnetes Tandem (final)
+  mentorMatchBy: null,           // 'hr' | 'wunsch' – wer hat das Mentee-Match gesetzt
+  menteeMatchBy: null,
+  wishMentorId: null,            // Wunsch des Mentees
+  wishMenteeId: null,            // Wunsch des Mentors
+  notices: [],                   // [{ role, type:'match'|'dissolve', text, date, seen }]
+  dissolved: [],                 // [{ role, partnerName, reason, date }] – nur HR sieht Gründe
   meetings: [], topics: [], feedback: [], results: [],
   // Onboarding-Event für die Startseite – von HR pflegbar
   event: {
@@ -167,6 +194,35 @@ $('#loginBtn').addEventListener('click', () => {
 $('#logoutBtn').addEventListener('click', () => {
   state.session = null; save(); applySession();
 });
+/* Schnell zwischen eigenem Mentee- und Mentor-Profil wechseln (man ist beides) */
+$('#switchRoleBtn').addEventListener('click', () => {
+  if (!state.session || isHR()) return;
+  state.session.role = isOldie() ? 'mentor' : 'oldie';
+  save();
+  applySession();
+  toast('Ansicht: ' + ROLE_LABEL[state.session.role] + '-Profil');
+});
+
+/* ---------- In-App-Benachrichtigungen ---------- */
+function addNotice(role, type, text) {
+  state.notices.push({ id: uid(), role, type, text, date: new Date().toISOString(), seen: false });
+}
+function showNotice() {
+  const bar = $('#noticeBar'); if (!bar) return;
+  const s = state.session;
+  const mine = (state.notices||[]).filter(n => n.role === s.role && !n.seen);
+  if (!mine.length) { bar.style.display = 'none'; bar.innerHTML = ''; return; }
+  bar.style.display = 'block';
+  bar.innerHTML = mine.map(n => `<div class="notice ${n.type}">
+    <span class="notice-ico">${n.type==='dissolve'?'⚠️':'🔔'}</span>
+    <span>${esc(n.text)}</span>
+    <button class="notice-x" onclick="dismissNotice('${n.id}')">×</button>
+  </div>`).join('');
+}
+window.dismissNotice = id => {
+  const n = (state.notices||[]).find(x => x.id === id); if (n) n.seen = true;
+  save(); showNotice();
+};
 
 function applySession() {
   const s = state.session;
@@ -181,6 +237,14 @@ function applySession() {
     hr:    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg> HR'
   };
   $('#roleBadge').innerHTML = `<span class="role-badge ${s.role}">${ICONS[s.role]} · ${esc(s.name)}</span>`;
+
+  // Profil-Umschalter (Mentee ↔ Mentor) – nur für Teilnehmende, nicht HR
+  const sw = $('#switchRoleBtn');
+  if (hr) { sw.style.display = 'none'; }
+  else { sw.style.display = ''; sw.textContent = oldie ? '⇄ Als Mentor ansehen' : '⇄ Als Mentee ansehen'; }
+
+  // In-App-Benachrichtigung für die aktuelle Rolle
+  showNotice();
 
   // Tabs je nach Rolle: HR sieht nur die Auswertungen, Oldie/Mentor den persönlichen Bereich
   const HR_TABS = ['hrtracking','auswertung'];
@@ -218,8 +282,8 @@ function applySession() {
     : 'Auch du lernst im Tandem – Relational Mentoring ist gegenseitig.';
   $('#goalLabel').textContent = oldie ? 'Dein Ziel in einem Satz' : 'Womit kannst du am besten unterstützen?';
   $('#profileSubmit').textContent = oldie ? 'Profil speichern & Matching starten' : 'Profil speichern & Mentees ansehen';
-  $('[data-label="matching"]').textContent = oldie ? 'Matching' : 'Meine Mentees';
-  $('#matchTitle').textContent = oldie ? 'Dein Matching' : 'Meine Mentees';
+  $('[data-label="matching"]').textContent = 'Match';
+  $('#matchTitle').textContent = oldie ? 'Vorschläge für dein Match' : 'Mögliche Mentees';
   $('#matchSub').textContent = oldie
     ? 'Auf Basis deiner Lernwünsche, Stärken, Präferenzen und Verfügbarkeit.'
     : 'Diese Mentees passen zu deinen Kompetenzen und Präferenzen.';
@@ -272,11 +336,11 @@ $('#profileForm').addEventListener('submit', e => {
     role: state.session.role, topics, expTopics: chipValues('expChips'),
     strengths: chipValues('strengthChips'),
     format: f.format.value, availability: f.availability.value, goal: f.goal.value.trim(),
-    hobbies: f.hobbies.value.trim(), workStyle: f.workStyle.value, commStyle: f.commStyle.value,
-    // Einschätzung aus dem Matching-Intake erhalten
+    interests: chipValues('interestChips'), nextTravel: f.nextTravel.value,
+    workStyle: f.workStyle.value, commStyle: f.commStyle.value,
+    // Einschätzung & Match-Status erhalten
     skillLevel: prev.skillLevel || 0, learningNeed: prev.learningNeed || 0, priorities: prev.priorities || []
   });
-  if (isOldie() && !state.mentorId) computeMatch(true);
   save();
   toast('Profil gespeichert ✓');
   switchTab('matching');
@@ -291,15 +355,17 @@ function renderProfileForm() {
   buildChips('topicChips', TOPICS, p ? (p.topics||[]) : []);
   buildChips('expChips', EXPERIENCE_TOPICS, p ? (p.expTopics||[]) : []);
   buildChips('strengthChips', STRENGTHS, p ? (p.strengths||[]) : []);
+  buildChips('interestChips', INTERESTS, p ? (p.interests||[]) : []);
+  fillSelect('travelSel', TRAVEL_DESTINATIONS, p ? p.nextTravel : null);
   fillSelect('workStyleSel', WORK_STYLES, p ? p.workStyle : null);
   fillSelect('commStyleSel', COMM_STYLES, p ? p.commStyle : null);
   const f = $('#profileForm');
-  if (!p) { f.reset(); fillSelect('workStyleSel', WORK_STYLES); fillSelect('commStyleSel', COMM_STYLES); return; }
+  if (!p) { f.reset(); fillSelect('travelSel', TRAVEL_DESTINATIONS); fillSelect('workStyleSel', WORK_STYLES); fillSelect('commStyleSel', COMM_STYLES); return; }
   f.name.value = p.name || ''; f.department.value = p.department || '';
   f.position.value = p.position || ''; f.email.value = p.email || '';
   f.format.value = p.format || 'Flexibel';
   f.availability.value = p.availability || 'Flexibel'; f.goal.value = p.goal || '';
-  f.hobbies.value = p.hobbies || '';
+  if (p.nextTravel) f.nextTravel.value = p.nextTravel;
   if (p.workStyle) f.workStyle.value = p.workStyle;
   if (p.commStyle) f.commStyle.value = p.commStyle;
 }
@@ -324,13 +390,14 @@ function renderProfileSummary() {
     ${(p.expTopics&&p.expTopics.length)?`
       <div class="t-date" style="margin:14px 0 6px;font-weight:600;color:var(--ink)">${oldie?'Erfahrungswissen, das ich weitergebe':'Erfahrungswissen, das ich lernen möchte'}</div>
       <div class="tag-row">${p.expTopics.map(t=>`<span class="mini-tag" style="background:var(--green-light);color:var(--green)">${esc(t)}</span>`).join('')}</div>`:''}
-    ${(p.workStyle||p.commStyle||p.hobbies)?`
+    ${(p.workStyle||p.commStyle||(p.interests&&p.interests.length)||(p.nextTravel&&p.nextTravel!=='–'))?`
       <div class="t-date" style="margin:14px 0 6px;font-weight:600;color:var(--ink)">Über mich</div>
+      ${(p.interests&&p.interests.length)?`<div class="tag-row" style="margin-bottom:6px">${p.interests.map(i=>`<span class="mini-tag" style="background:#eaf6ff;color:#1c6aa8">${esc(i)}</span>`).join('')}</div>`:''}
       <div class="tag-row">
         ${p.workStyle?`<span class="mini-tag">🧭 ${esc(p.workStyle)}</span>`:''}
         ${p.commStyle?`<span class="mini-tag">💬 ${esc(p.commStyle)}</span>`:''}
-      </div>
-      ${p.hobbies?`<div class="sub" style="margin:8px 0 0">🎯 ${esc(p.hobbies)}</div>`:''}`:''}
+        ${(p.nextTravel&&p.nextTravel!=='–')?`<span class="mini-tag">✈️ ${esc(p.nextTravel)}</span>`:''}
+      </div>`:''}
     ${p.goal?`<p style="margin-top:14px;color:var(--muted)"><em>„${esc(p.goal)}"</em></p>`:''}`;
 }
 
@@ -381,65 +448,162 @@ function computeMatch(autoPick) {
   return ranked;
 }
 
+/* Gemeinsamkeiten zwischen zwei Personen – als Gesprächsanlässe */
+function commonalities(a, b) {
+  const out = [];
+  (a.interests||[]).filter(i => (b.interests||[]).includes(i)).forEach(i => out.push('🎯 ' + i));
+  if (a.nextTravel && a.nextTravel !== '–' && a.nextTravel === b.nextTravel) out.push('✈️ Reiseziel: ' + a.nextTravel);
+  if (a.workStyle && a.workStyle === b.workStyle) out.push('🧭 ' + a.workStyle);
+  if (a.commStyle && a.commStyle === b.commStyle) out.push('💬 ' + a.commStyle);
+  if (a.department && a.department === b.dept) out.push('🏢 Abteilung: ' + a.department);
+  return out;
+}
 function renderMatching() {
-  const list = $('#matchList');
   const p = myProfile();
+  renderHelpCard();
+  const matchCard = $('#matchCard'), intake = $('#intakeCard'), suggest = $('#suggestCard');
   if (!p || !(p.topics||[]).length) {
-    list.innerHTML = emptyState('Bitte zuerst dein Profil ausfüllen.');
+    matchCard.style.display = 'none'; intake.style.display = ''; suggest.style.display = '';
+    $('#matchList').innerHTML = emptyState('Bitte zuerst dein Profil ausfüllen.');
     return;
   }
-
+  const finalId = isOldie() ? state.mentorId : state.menteeId;
+  if (finalId) {
+    matchCard.style.display = ''; intake.style.display = 'none'; suggest.style.display = 'none';
+    renderMatchCard(finalId);
+    return;
+  }
+  // Noch kein Match: Vorschläge + Wunsch
+  matchCard.style.display = 'none'; intake.style.display = ''; suggest.style.display = '';
+  const list = $('#matchList');
+  const wishId = isOldie() ? state.wishMentorId : state.wishMenteeId;
   if (isOldie()) {
     const ranked = computeMatch(false);
     list.innerHTML = ranked.map(({ m, score, mutual, fit }) => {
-      const chosen = state.mentorId === m.id;
       const shared = m.teaches.filter(t => p.topics.includes(t));
       return matchRow({
         name:m.name, sub:`${m.position} · ${m.dept} · ${m.format}`,
-        tags: shared.length?shared:m.teaches.slice(0,3), score, chosen, mutual, fit,
-        action:`pickMentor('${m.id}')`, label: chosen?'Ausgewählt':'Auswählen', green:false
+        tags: shared.length ? shared.slice(0,3) : m.teaches.slice(0,3),
+        score, wished: wishId===m.id, mutual, fit, action:`markWish('${m.id}')`, green:false
       });
     }).join('');
   } else {
-    // Mentor-Sicht: Mentees (echtes Oldie-Profil falls vorhanden + Demo-Pool)
     const pool = [...MENTEE_POOL];
-    if (state.menteeProfile && (state.menteeProfile.topics||[]).length) {
-      pool.unshift({ id:'self', ...state.menteeProfile });
-    }
+    if (state.menteeProfile && (state.menteeProfile.topics||[]).length) pool.unshift({ id:'self', ...state.menteeProfile });
     list.innerHTML = pool.map(mentee => {
       const { score, mutual, fit } = scoreMentee(p, mentee);
-      const chosen = state.menteeId === mentee.id;
       const shared = (mentee.topics||[]).filter(t => (p.topics||[]).includes(t));
       return matchRow({
         name:mentee.name, sub:`${mentee.position||''} · ${mentee.dept||''}`,
-        tags: shared.length?shared:(mentee.topics||[]).slice(0,3), score, chosen, mutual, fit,
-        action:`pickMentee('${mentee.id}')`, label: chosen?'Ausgewählt':'Begleiten', green:true
+        tags: shared.length?shared:(mentee.topics||[]).slice(0,3), score, wished: wishId===mentee.id, mutual, fit,
+        action:`markWish('${mentee.id}')`, green:true
       });
     }).join('');
   }
 }
-function matchRow({name, sub, tags, score, chosen, action, label, green, mutual, fit}) {
+function matchRow({name, sub, tags, score, wished, action, green, mutual, fit}) {
   const mut = (mutual && mutual.length)
-    ? `<div class="tag-row" style="margin-top:6px"><span class="meta" style="font-size:.8rem">↔ Gegenseitig:</span> ${mutual.map(t=>`<span class="mini-tag" style="background:var(--green-light);color:var(--green)">${esc(t)}</span>`).join('')}</div>`
-    : '';
+    ? `<div class="tag-row" style="margin-top:6px"><span class="meta" style="font-size:.8rem">↔ Gegenseitig:</span> ${mutual.map(t=>`<span class="mini-tag" style="background:var(--green-light);color:var(--green)">${esc(t)}</span>`).join('')}</div>` : '';
   const fitRow = (fit && fit.length)
-    ? `<div class="tag-row" style="margin-top:6px"><span class="meta" style="font-size:.8rem">✓ Passt bei:</span> ${fit.map(t=>`<span class="fit-tag">${esc(t)}</span>`).join('')}</div>`
-    : '';
-  return `<div class="match" style="${chosen?'border-color:var(--green);background:var(--green-light)':''}">
+    ? `<div class="tag-row" style="margin-top:6px"><span class="meta" style="font-size:.8rem">✓ Passt bei:</span> ${fit.map(t=>`<span class="fit-tag">${esc(t)}</span>`).join('')}</div>` : '';
+  return `<div class="match" style="${wished?'border-color:var(--blue);background:#eaf6ff':''}">
     <div class="avatar ${green?'g':''}">${initials(name)}</div>
     <div class="match-info">
-      <b>${esc(name)}</b> ${chosen?'<span class="pill done" style="margin-left:6px">Tandem</span>':''}
+      <b>${esc(name)}</b> ${wished?'<span class="pill" style="background:#dbeeff;color:#1c6aa8;margin-left:6px">Dein Wunsch</span>':''}
       <div class="role">${esc(sub)}</div>
       <div class="tag-row">${tags.map(t=>`<span class="mini-tag">${esc(t)}</span>`).join('')}</div>
       ${fitRow}
       ${mut}
     </div>
     <div class="score"><div class="num">${score}%</div><div class="lbl">Match</div></div>
-    <button class="btn ${chosen?'btn-ghost':'btn-primary'} btn-sm" onclick="${action}">${label}</button>
+    <button class="btn ${wished?'btn-ghost':'btn-outline'} btn-sm" onclick="${action}">${wished?'Wunsch ✓':'Als Wunsch'}</button>
   </div>`;
 }
-window.pickMentor = id => { state.mentorId = id; save(); toast('Match bestätigt – jetzt Treffen vereinbaren!'); switchTab('treffen'); };
-window.pickMentee = id => { state.menteeId = id; save(); toast('Mentee ausgewählt – jetzt Treffen vereinbaren!'); switchTab('treffen'); };
+/* Hybrid: Teilnehmende äußern nur einen Wunsch – HR weist final zu */
+window.markWish = id => {
+  if (isOldie()) state.wishMentorId = state.wishMentorId === id ? null : id;
+  else state.wishMenteeId = state.wishMenteeId === id ? null : id;
+  const has = isOldie() ? state.wishMentorId : state.wishMenteeId;
+  save();
+  toast(has ? 'Wunsch gespeichert – HR berücksichtigt ihn.' : 'Wunsch entfernt.');
+};
+
+/* Match-Detailkarte (zugeordnetes Tandem) */
+function renderMatchCard(partnerId) {
+  const me = myProfile();
+  const partner = isOldie() ? MENTOR_POOL.find(m=>m.id===partnerId)
+    : (partnerId==='self' ? state.menteeProfile : MENTEE_POOL.find(m=>m.id===partnerId));
+  if (!partner) { $('#matchCard').style.display='none'; return; }
+  const partnerTopics = isOldie() ? (partner.teaches||[]) : (partner.topics||[]);
+  const com = commonalities(me, partner);
+  const by = isOldie() ? state.mentorMatchBy : state.menteeMatchBy;
+  $('#matchCard').innerHTML = `
+    <div class="row-between" style="align-items:flex-start">
+      <div><h3 style="margin:0">Dein Match</h3>
+        <p class="sub" style="margin:2px 0 0">${by==='hr' ? 'Von HR zugeordnet auf Basis der Matching-Faktoren.' : 'Bestätigtes Tandem.'}</p></div>
+      ${by==='hr' ? '<span class="pill done">HR-Zuordnung</span>' : ''}
+    </div>
+    <div class="match" style="border-color:var(--green);background:var(--green-light);margin-top:16px">
+      <div class="avatar ${isOldie()?'':'g'}">${initials(partner.name)}</div>
+      <div class="match-info">
+        <b style="font-size:1.15rem">${esc(partner.name)}</b>
+        <span class="role-badge ${isOldie()?'mentor':'oldie'}" style="margin-left:8px;padding:2px 9px;font-size:.72rem">${isOldie()?'Mentor:in':'Mentee'}</span>
+        <div class="role">${esc(partner.position||'')} · ${esc(partner.dept||'')} · ${esc(partner.format||'')}</div>
+        <div class="tag-row" style="margin-top:8px">${partnerTopics.slice(0,4).map(t=>`<span class="mini-tag">${esc(t)}</span>`).join('')}</div>
+        ${(partner.interests&&partner.interests.length)?`<div class="tag-row" style="margin-top:6px">${partner.interests.map(i=>`<span class="mini-tag" style="background:#eaf6ff;color:#1c6aa8">${esc(i)}</span>`).join('')}</div>`:''}
+      </div>
+    </div>
+    <div class="commons">
+      <div class="t-date" style="font-weight:700;color:var(--ink);margin-bottom:8px">🤝 Gemeinsamkeiten – guter Gesprächseinstieg</div>
+      ${com.length ? `<div class="tag-row">${com.map(c=>`<span class="common-tag">${esc(c)}</span>`).join('')}</div>`
+        : `<p class="meta" style="margin:0">Noch keine direkten Gemeinsamkeiten. Ergänzt euer „Über dich"-Profil für mehr Anknüpfungspunkte.</p>`}
+    </div>
+    <div class="divider"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary btn-sm" onclick="switchTab('treffen')">Treffen vereinbaren</button>
+      <button class="btn btn-outline btn-sm" onclick="openDissolve()">Match auflösen</button>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('helpCard').scrollIntoView({behavior:'smooth'})">Probleme? Hilfe &amp; Kontakt</button>
+    </div>
+    <div id="dissolveBox" style="display:none;margin-top:16px;background:var(--bg-cream);border:1px solid var(--line);border-radius:12px;padding:16px">
+      <div class="field" style="margin-bottom:10px"><label>Grund für die Auflösung <span style="font-weight:400;color:var(--muted)">(optional – nur HR sieht den Grund)</span></label>
+        <textarea id="dissolveReason" placeholder="z. B. terminlich schwierig, fachlich doch nicht passend, persönlich kein gutes Match …"></textarea></div>
+      <button class="btn btn-primary btn-sm" onclick="confirmDissolve()">Auflösung bestätigen</button>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('dissolveBox').style.display='none'">Abbrechen</button>
+    </div>`;
+}
+window.openDissolve = () => { const b=$('#dissolveBox'); if(b) b.style.display = b.style.display==='none'?'block':'none'; };
+window.confirmDissolve = () => {
+  const reason = ($('#dissolveReason').value||'').trim();
+  const partnerId = isOldie() ? state.mentorId : state.menteeId;
+  const partner = isOldie() ? MENTOR_POOL.find(m=>m.id===partnerId)
+    : (partnerId==='self' ? state.menteeProfile : MENTEE_POOL.find(m=>m.id===partnerId));
+  state.dissolved.push({
+    id: uid(), role: state.session.role, by: state.session.name,
+    partnerName: partner ? partner.name : '–',
+    reason: reason || '(kein Grund angegeben)', date: new Date().toISOString()
+  });
+  if (isOldie()) { state.mentorId = null; state.mentorMatchBy = null; }
+  else { state.menteeId = null; state.menteeMatchBy = null; }
+  addNotice('hr', 'dissolve', `Match aufgelöst von ${state.session.name} (${ROLE_LABEL[state.session.role]}).`);
+  save();
+  toast('Match aufgelöst. HR wurde informiert.');
+};
+
+/* Hilfe & Kontakt (statischer HR-Kontakt) */
+function renderHelpCard() {
+  const c = $('#helpCard'); if (!c) return;
+  c.innerHTML = `
+    <h3>Hilfe &amp; Kontakt</h3>
+    <p class="sub">Läuft im Tandem etwas technisch oder persönlich nicht rund? Deine HR-Ansprechperson hilft – vertraulich.</p>
+    <div class="contact-box">
+      <div class="avatar g">${initials(HR_CONTACT.name)}</div>
+      <div>
+        <b>${esc(HR_CONTACT.name)}</b>
+        <div class="sub" style="margin:0">${esc(HR_CONTACT.role)}</div>
+        <div class="meta" style="margin-top:6px">✉️ <a href="mailto:${esc(HR_CONTACT.email)}">${esc(HR_CONTACT.email)}</a> &nbsp;·&nbsp; ☎️ ${esc(HR_CONTACT.phone)}</div>
+      </div>
+    </div>`;
+}
 
 /* ---------- Matching-Intake: Einschätzung & Prioritäten ---------- */
 $('#intakeForm').addEventListener('submit', e => {
@@ -742,8 +906,66 @@ function scaleRow(label, v, green) {
     <div class="dist-bar"><span style="width:${v/5*100}%${green?';background:var(--green)':''}"></span></div>
     <span class="val">${v?v.toFixed(1):'–'}</span></div>`;
 }
+/* ---------- HR-Matchmaker: zentrale Zuordnung (Hybrid) ---------- */
+function mmBlock(side, title, dept, cands, wishId) {
+  return `<div class="mm-block">
+    <div class="mm-head"><b>${esc(title)}</b> <span class="meta">${esc(dept||'')}</span></div>
+    <div class="mm-cands">
+      ${cands.slice(0,4).map(c=>`<div class="mm-cand">
+        <div><b>${esc(c.name)}</b> ${wishId===c.id?'<span class="pill" style="background:#dbeeff;color:#1c6aa8">Wunsch</span>':''}
+          <div class="meta">${esc(c.sub)}</div></div>
+        <div style="display:flex;align-items:center;gap:12px"><span class="mm-score">${c.score}%</span>
+          <button class="btn btn-primary btn-sm" onclick="hrAssign('${side}','${c.id}')">Zuweisen</button></div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+function renderMatchmaker() {
+  const box = $('#matchmaker'); if (!box) return;
+  const blocks = [];
+  const mp = state.menteeProfile, tp = state.mentorProfile;
+  if (mp && (mp.topics||[]).length && !state.mentorId) {
+    const ranked = MENTOR_POOL.map(m=>({m, ...scoreMentor(mp, m)})).sort((a,b)=>b.score-a.score);
+    blocks.push(mmBlock('mentee', mp.name + ' · Mentee', mp.department,
+      ranked.map(r=>({ id:r.m.id, name:r.m.name, sub:`${r.m.position} · ${r.m.dept}`, score:r.score })), state.wishMentorId));
+  }
+  if (tp && (tp.topics||[]).length && !state.menteeId) {
+    const pool = [...MENTEE_POOL];
+    if (mp && (mp.topics||[]).length) pool.unshift({ id:'self', ...mp });
+    const ranked = pool.map(e=>({e, ...scoreMentee(tp, e)})).sort((a,b)=>b.score-a.score);
+    blocks.push(mmBlock('mentor', tp.name + ' · Mentor', tp.department,
+      ranked.map(r=>({ id:r.e.id, name:r.e.name, sub:`${r.e.position||''} · ${r.e.dept||''}`, score:r.score })), state.wishMenteeId));
+  }
+  box.innerHTML = blocks.length ? blocks.join('')
+    : '<p class="meta">Keine offenen Zuordnungen. Sobald sich Teilnehmende anmelden und noch kein Match haben, erscheinen sie hier zur Zuordnung.</p>';
+}
+window.hrAssign = (side, partnerId) => {
+  if (side === 'mentee') {
+    state.mentorId = partnerId; state.mentorMatchBy = 'hr'; state.wishMentorId = null;
+    const nm = (MENTOR_POOL.find(m=>m.id===partnerId)||{}).name || 'deine:n Mentor:in';
+    addNotice('oldie', 'match', `Neues Match: Du wurdest ${nm} zugeordnet. Details im Match-Tab.`);
+  } else {
+    state.menteeId = partnerId; state.menteeMatchBy = 'hr'; state.wishMenteeId = null;
+    const nm = partnerId==='self' ? (state.menteeProfile||{}).name : (MENTEE_POOL.find(m=>m.id===partnerId)||{}).name;
+    addNotice('mentor', 'match', `Neues Match: Du begleitest ${nm||'eine:n Mentee'}. Details im Match-Tab.`);
+  }
+  save();
+  toast('Match zugewiesen – die Beteiligten wurden benachrichtigt.');
+};
+function renderDissolved() {
+  const el = $('#dissolvedList'); if (!el) return;
+  if (!state.dissolved.length) { el.innerHTML = '<p class="meta">Keine aufgelösten Matches.</p>'; return; }
+  el.innerHTML = [...state.dissolved].reverse().map(d=>`<div class="list-item" style="align-items:flex-start">
+    <div class="body"><b>${esc(d.by)}</b> <span class="role-badge ${d.role}" style="padding:2px 9px;font-size:.72rem">${ROLE_LABEL[d.role]}</span> · Partner: ${esc(d.partnerName)}
+      <div class="t-date">${fmtDate(d.date)}</div>
+      <div class="meta" style="margin-top:6px">📝 Grund: ${esc(d.reason)}</div>
+    </div></div>`).join('');
+}
+
 function renderHRDashboard() {
   if (!isHR()) return;
+  renderMatchmaker();
+  renderDissolved();
   const lt = localTandem();
   const tandems = lt ? [...DEMO_TANDEMS, lt] : DEMO_TANDEMS.slice();
   const sum = k => tandems.reduce((a,t)=>a+(t[k]||0),0);
