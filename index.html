@@ -117,6 +117,47 @@
   </div>
 </section>
 
+<!-- ===== Nächstes Onboarding-Event (über HR-Seite pflegbar) ===== -->
+<section class="section event-section" id="event">
+  <div class="wrap">
+    <div class="event-card">
+      <div class="event-main">
+        <span class="event-flag"><span class="pulse"></span> Nächstes Onboarding-Event</span>
+        <h2 id="evTitle">—</h2>
+        <p class="event-desc" id="evDesc"></p>
+        <div class="event-meta">
+          <div class="ev-item">
+            <span class="ev-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+            <div><b>Wann</b><span id="evWhen">—</span></div>
+          </div>
+          <div class="ev-item">
+            <span class="ev-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+            <div><b>Wo</b><span id="evWhere">—</span></div>
+          </div>
+          <div class="ev-item">
+            <span class="ev-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
+            <div><b>Zielgruppe</b><span id="evWho">—</span></div>
+          </div>
+        </div>
+        <div class="event-actions">
+          <button class="btn btn-primary" id="evRsvp" type="button">Ich bin dabei</button>
+          <button class="btn btn-outline" id="evIcs" type="button">Zum Kalender hinzufügen</button>
+          <span class="ev-rsvp-note" id="evRsvpNote"></span>
+        </div>
+      </div>
+      <div class="event-aside">
+        <div class="cd-title">Countdown</div>
+        <div class="countdown" id="evCountdown">
+          <div class="cd-box"><span class="cd-num" id="cdDays">–</span><span class="cd-lbl">Tage</span></div>
+          <div class="cd-box"><span class="cd-num" id="cdHours">–</span><span class="cd-lbl">Std</span></div>
+          <div class="cd-box"><span class="cd-num" id="cdMins">–</span><span class="cd-lbl">Min</span></div>
+        </div>
+        <div class="ev-participants" id="evParticipants"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===== Strengths ===== -->
 <section class="section cream" id="benefits">
   <div class="wrap">
@@ -233,6 +274,74 @@
     <div class="foot-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Wertschätzung im Mittelpunkt</div>
   </div>
 </footer>
+
+<script>
+/* Liest das Onboarding-Event aus localStorage (von der HR-Seite gepflegt) und rendert
+   den interaktiven Bereich. Fällt auf einen Standard zurück, wenn noch nichts gesetzt ist. */
+(function () {
+  var KEY = 'digitaltogether_v2';
+  var DEFAULT = {
+    title: 'Kick-off: Relational Mentoring',
+    date: '2026-07-15', time: '14:00',
+    location: 'Hauptstandort · Forum (EG) & online via Video-Call',
+    audience: 'Alle Mitarbeitenden',
+    desc: 'Lerne das Programm kennen, triff dein mögliches Tandem und erfahre, wie der gegenseitige Wissensaustausch konkret abläuft.'
+  };
+  function getEvent() {
+    try { var s = JSON.parse(localStorage.getItem(KEY)); if (s && s.event && s.event.title) return s.event; } catch (e) {}
+    return DEFAULT;
+  }
+  var ev = getEvent();
+  var dt = new Date(ev.date + 'T' + (ev.time || '00:00'));
+
+  document.getElementById('evTitle').textContent = ev.title;
+  document.getElementById('evDesc').textContent = ev.desc || '';
+  document.getElementById('evWhen').textContent =
+    dt.toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' }) +
+    ' · ' + (ev.time || '') + ' Uhr';
+  document.getElementById('evWhere').textContent = ev.location || '';
+  document.getElementById('evWho').textContent = ev.audience || '';
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function tick() {
+    var diff = dt - new Date();
+    var cd = document.getElementById('evCountdown');
+    if (isNaN(dt) || diff <= 0) { cd.innerHTML = '<div class="cd-live">Es geht gleich los –<br>jetzt anmelden!</div>'; return; }
+    document.getElementById('cdDays').textContent = Math.floor(diff / 86400000);
+    document.getElementById('cdHours').textContent = pad(Math.floor(diff % 86400000 / 3600000));
+    document.getElementById('cdMins').textContent = pad(Math.floor(diff % 3600000 / 60000));
+  }
+  tick(); setInterval(tick, 30000);
+
+  /* RSVP – lokal gespeichert, pro Event-Datum */
+  var rkey = 'dt_rsvp_' + ev.date, base = 24;
+  function renderRsvp() {
+    var on = localStorage.getItem(rkey) === '1';
+    var btn = document.getElementById('evRsvp');
+    btn.textContent = on ? '✓ Du bist dabei' : 'Ich bin dabei';
+    btn.classList.toggle('confirmed', on);
+    document.getElementById('evRsvpNote').textContent = on ? 'Schön, dass du dabei bist!' : '';
+    document.getElementById('evParticipants').innerHTML = '<b>' + (base + (on ? 1 : 0)) + '</b> Kolleg:innen sind schon dabei';
+  }
+  document.getElementById('evRsvp').addEventListener('click', function () {
+    localStorage.setItem(rkey, localStorage.getItem(rkey) === '1' ? '0' : '1'); renderRsvp();
+  });
+  renderRsvp();
+
+  /* Kalender-Export (.ics) */
+  document.getElementById('evIcs').addEventListener('click', function () {
+    var end = new Date(dt.getTime() + 90 * 60000);
+    function f(d) { return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); }
+    var ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//DigitalTogether//DE', 'BEGIN:VEVENT',
+      'UID:' + ev.date + '@digitaltogether', 'DTSTAMP:' + f(new Date()), 'DTSTART:' + f(dt), 'DTEND:' + f(end),
+      'SUMMARY:' + ev.title, 'LOCATION:' + (ev.location || ''),
+      'DESCRIPTION:' + (ev.desc || '').replace(/\r?\n/g, ' '), 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+    a.download = 'onboarding-event.ics'; a.click(); URL.revokeObjectURL(a.href);
+  });
+})();
+</script>
 
 </body>
 </html>

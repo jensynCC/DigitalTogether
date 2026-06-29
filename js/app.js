@@ -77,7 +77,15 @@ const blank = {
   mentorProfile: null,           // Profil des Mentors
   mentorId: null,                // vom Oldie gewähltes Tandem
   menteeId: null,                // vom Mentor gewähltes Tandem
-  meetings: [], topics: [], feedback: [], results: []
+  meetings: [], topics: [], feedback: [], results: [],
+  // Onboarding-Event für die Startseite – von HR pflegbar
+  event: {
+    title: 'Kick-off: Relational Mentoring',
+    date: '2026-07-15', time: '14:00',
+    location: 'Hauptstandort · Forum (EG) & online via Video-Call',
+    audience: 'Alle Mitarbeitenden',
+    desc: 'Lerne das Programm kennen, triff dein mögliches Tandem und erfahre, wie der gegenseitige Wissensaustausch konkret abläuft.'
+  }
 };
 let state = load();
 
@@ -693,6 +701,31 @@ function renderHRDashboard() {
   const maxD = Math.max(...depts.map(d=>d[1]), 1);
   $('#hrDepts').innerHTML = depts.map(([d,c])=>`<div class="dist-row"><span class="lbl" style="width:130px;white-space:normal">${esc(d)}</span>
     <div class="dist-bar"><span style="width:${c/maxD*100}%;background:var(--green)"></span></div><span class="val">${c}</span></div>`).join('');
+
+  renderEventEditor();
+}
+
+/* ---------- Onboarding-Event (HR pflegt, Startseite zeigt) ---------- */
+$('#eventForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target;
+  state.event = {
+    title: f.title.value.trim(), date: f.date.value, time: f.time.value,
+    location: f.location.value.trim(), audience: f.audience.value, desc: f.desc.value.trim()
+  };
+  save();
+  toast('Event gespeichert – Startseite aktualisiert ✓');
+});
+function renderEventEditor() {
+  const ev = state.event || {}; const f = $('#eventForm'); if (!f) return;
+  f.title.value = ev.title || ''; f.date.value = ev.date || ''; f.time.value = ev.time || '';
+  f.location.value = ev.location || ''; if (ev.audience) f.audience.value = ev.audience;
+  f.desc.value = ev.desc || '';
+  $('#eventPreview').innerHTML = ev.title
+    ? `<div class="meta" style="padding:10px 12px;background:var(--green-light);border-radius:10px">
+        Aktuell auf der Startseite: <b>${esc(ev.title)}</b> · ${ev.date?fmtDate(ev.date):'–'}${ev.time?', '+ev.time+' Uhr':''}
+        · ${esc(ev.location||'')} · Zielgruppe: ${esc(ev.audience||'–')}</div>`
+    : '';
 }
 
 /* ---------- Results & Tracking ---------- */

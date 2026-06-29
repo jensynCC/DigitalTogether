@@ -314,6 +314,36 @@
         <h3>Ergebnis-Tracking des Programms</h3>
         <p class="sub" style="margin:0">Programmweite Wirkungsmessung über alle aktiven Tandems – als Grundlage für die HR-Erfolgsmessung der Mentoring-Strategie.</p>
       </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="row-between">
+          <div>
+            <h3>Onboarding-Event auf der Startseite</h3>
+            <p class="sub" style="margin:0">Diese Angaben erscheinen direkt im interaktiven Event-Bereich der Startseite.</p>
+          </div>
+          <a class="btn btn-ghost btn-sm" href="index.html#event" target="_blank" rel="noopener">Startseite ansehen ↗</a>
+        </div>
+        <form id="eventForm" style="margin-top:18px">
+          <div class="field"><label>Titel des Events</label><input name="title" required placeholder="z. B. Kick-off: Relational Mentoring"/></div>
+          <div class="grid-2" style="gap:14px">
+            <div class="field"><label>Datum (Wann)</label><input type="date" name="date" required/></div>
+            <div class="field"><label>Uhrzeit</label><input type="time" name="time" required/></div>
+          </div>
+          <div class="field"><label>Ort (Wo)</label><input name="location" required placeholder="z. B. Forum (EG) & online via Video-Call"/></div>
+          <div class="field"><label>Zielgruppe</label>
+            <select name="audience">
+              <option>Alle Mitarbeitenden</option>
+              <option>Arbeitserfahrene Mitarbeitende (Mentees)</option>
+              <option>Digital affine Mitarbeitende (Mentor:innen)</option>
+              <option>Neue Tandems</option>
+              <option>Interessierte ohne Tandem</option>
+            </select>
+          </div>
+          <div class="field"><label>Kurzbeschreibung</label><textarea name="desc" placeholder="Worum geht es beim Event? Was erwartet die Teilnehmenden?"></textarea></div>
+          <button class="btn btn-primary btn-block" type="submit">Event speichern &amp; auf Startseite veröffentlichen</button>
+        </form>
+        <div id="eventPreview" style="margin-top:14px"></div>
+      </div>
       <div class="grid-4" id="hrKpiRow" style="margin:22px 0"></div>
       <div class="grid-2">
         <div class="card">
