@@ -23,11 +23,15 @@
     <div class="role-pick" id="rolePick">
       <div class="role-opt oldie" data-role="oldie">
         <div class="r-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/><path d="M19 8v6M16 11h6"/></svg></div>
-        <b>Oldie</b><span>Erfahren – ich lerne digitale Tools</span>
+        <b>Mentee</b><span>Erfahren – ich lerne digitale Tools</span>
       </div>
       <div class="role-opt mentor" data-role="mentor">
         <div class="r-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7l9 5 9-5-9-5z"/><path d="M3 7v6l9 5 9-5V7"/></svg></div>
-        <b>Mentor</b><span>Digital-affin – ich gebe Wissen weiter</span>
+        <b>Mentor</b><span>Digital affin – ich gebe Wissen weiter</span>
+      </div>
+      <div class="role-opt hr" data-role="hr">
+        <div class="r-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg></div>
+        <b>HR-Personalverantwortliche</b><span>Ich werte das Ergebnis-Tracking des Programms aus</span>
       </div>
     </div>
     <div class="field" style="text-align:left"><label>Dein Name</label><input id="loginName" placeholder="Vor- und Nachname"/></div>
@@ -66,12 +70,13 @@
 
     <!-- Tabs -->
     <div class="tabs" id="tabs">
+      <button class="tab" data-tab="hrtracking"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg> Ergebnis-Tracking</button>
       <button class="tab active" data-tab="profil"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <span data-label="profil">Profil</span></button>
       <button class="tab" data-tab="matching"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg> <span data-label="matching">Matching</span></button>
       <button class="tab" data-tab="treffen"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Treffen <span class="badge-count" id="cntTreffen">0</span></button>
       <button class="tab" data-tab="austausch"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> Wissensaustausch</button>
-      <button class="tab" data-tab="feedback"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Feedback</button>
-      <button class="tab" data-tab="auswertung"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="7"/><rect x="13" y="6" width="3" height="11"/></svg> Feedback-Auswertung</button>
+      <button class="tab" data-tab="feedback"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Lernjournal</button>
+      <button class="tab" data-tab="auswertung"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="7"/><rect x="13" y="6" width="3" height="11"/></svg> Programm-Auswertung</button>
       <button class="tab" data-tab="ergebnisse"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg> Ergebnisse &amp; Tracking</button>
     </div>
 
@@ -92,7 +97,13 @@
             <div class="field">
               <label id="topicLabel">Worüber möchtest du gern lernen? (Lernwünsche)</label>
               <div class="chips" id="topicChips"></div>
-              <div class="hint">Wähle alle passenden Themen aus.</div>
+              <div class="hint" id="topicHint">Wähle alle passenden Themen aus.</div>
+            </div>
+
+            <div class="field" id="expField">
+              <label id="expLabel">Welches Erfahrungswissen gibst du weiter?</label>
+              <div class="chips" id="expChips"></div>
+              <div class="hint" id="expHint">Relational Mentoring lebt vom Austausch in beide Richtungen.</div>
             </div>
 
             <div class="field">
@@ -124,7 +135,7 @@
               <li><b>Match erhalten</b><div class="t-date">Passende:s Tandem auswählen</div></li>
               <li><b>Treffen vereinbaren</b><div class="t-date">Einzel- oder Regeltermine festlegen</div></li>
               <li><b>Wissen austauschen</b><div class="t-date">Themen gemeinsam bearbeiten</div></li>
-              <li><b>Feedback &amp; Ergebnisse</b><div class="t-date">Fortschritt festhalten</div></li>
+              <li><b>Reflektieren &amp; Ergebnisse</b><div class="t-date">Lernjournal führen, Fortschritt festhalten</div></li>
             </ul>
           </div>
         </div>
@@ -190,7 +201,7 @@
           <p class="sub">Halte fest, was ihr gemeinsam bearbeitet – beide Seiten lernen.</p>
           <form id="topicForm" style="margin-top:16px">
             <div class="field"><label>Thema / Kompetenz</label><input name="title" required placeholder="z. B. Digitale Signaturen"/></div>
-            <div class="field"><label>Richtung</label><select name="direction"><option value="mentee">Oldie lernt (von Mentor)</option><option value="mentor">Oldie gibt weiter (an Mentor)</option></select></div>
+            <div class="field"><label>Richtung</label><select name="direction"><option value="mentee">Mentee lernt (von Mentor)</option><option value="mentor">Mentee gibt weiter (an Mentor)</option></select></div>
             <div class="field"><label>Notizen / nächste Schritte</label><textarea name="notes" placeholder="Was wurde geübt? Was ist offen?"></textarea></div>
             <button class="btn btn-primary btn-block" type="submit">Lernthema hinzufügen</button>
           </form>
@@ -202,47 +213,74 @@
       </div>
     </section>
 
-    <!-- ===== FEEDBACK ===== -->
+    <!-- ===== LERNJOURNAL / SELBSTREFLEXION ===== -->
     <section class="panel" id="panel-feedback">
       <div class="grid-2">
         <div class="card">
-          <h3>Feedback geben</h3>
-          <p class="sub">Wie war euer Austausch? Dein Feedback macht das Programm besser.</p>
+          <h3>Lernjournal &amp; Selbstreflexion</h3>
+          <p class="sub">Hier bewertest du <b>nicht</b> dein Gegenüber, sondern reflektierst deinen eigenen Fortschritt.</p>
           <form id="feedbackForm" style="margin-top:16px">
-            <div class="field"><label>Treffen / Tandem</label><select name="ref" id="feedbackRef"></select></div>
-            <div class="field"><label>Gesamtbewertung</label>
-              <div class="stars" id="starRate">
+            <div class="field"><label>Bezug</label><select name="ref" id="feedbackRef"></select></div>
+
+            <div class="field"><label>Wie viel Fortschritt nimmst du wahr?</label>
+              <div class="stars" id="rateProgress" data-target="progress">
                 <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
               </div>
-              <input type="hidden" name="rating" value="0"/>
+              <input type="hidden" name="progress" value="0"/>
+              <div class="hint">1 = kaum Fortschritt · 5 = großer Fortschritt</div>
             </div>
-            <div class="field"><label>Was lief gut?</label><textarea name="positive" placeholder="…"></textarea></div>
-            <div class="field"><label>Was können wir verbessern?</label><textarea name="improve" placeholder="…"></textarea></div>
-            <button class="btn btn-primary btn-block" type="submit">Feedback absenden</button>
+
+            <div class="field"><label>Wie sicher fühlst du dich mit dem Gelernten?</label>
+              <div class="stars" id="rateConfidence" data-target="confidence">
+                <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+              </div>
+              <input type="hidden" name="confidence" value="0"/>
+              <div class="hint">1 = noch unsicher · 5 = sehr sicher</div>
+            </div>
+
+            <div class="field"><label>Was habe ich mitgenommen?</label><textarea name="learned" placeholder="z. B. Ich kann jetzt eine Videokonferenz selbst starten und den Bildschirm teilen."></textarea></div>
+            <div class="field"><label>Was möchte ich als Nächstes üben?</label><textarea name="next" placeholder="z. B. Aufzeichnungen anlegen und im Team teilen."></textarea></div>
+
+            <div class="divider"></div>
+            <h4 style="margin-bottom:4px">Kurzes Programm-Feedback</h4>
+            <p class="sub" style="margin-bottom:12px">Anonym aggregiert – nur damit HR das Programm als Ganzes bewerten kann.</p>
+            <div class="field"><label>Wie hilfreich ist das Mentoring-Programm für dich?</label>
+              <div class="stars" id="rateProgram" data-target="programScore">
+                <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+              </div>
+              <input type="hidden" name="programScore" value="0"/>
+            </div>
+            <div class="field"><label class="check"><input type="checkbox" name="recommend"/> Ich würde das Programm Kolleg:innen weiterempfehlen</label></div>
+
+            <button class="btn btn-primary btn-block" type="submit">Eintrag speichern</button>
           </form>
         </div>
         <div class="card">
-          <h3>Eingegangenes Feedback</h3>
+          <h3>Meine Journal-Einträge</h3>
+          <p class="sub">Dein persönlicher Verlauf – nur für dich sichtbar.</p>
           <div id="feedbackList" style="margin-top:14px"></div>
         </div>
       </div>
     </section>
 
-    <!-- ===== FEEDBACK-AUSWERTUNG ===== -->
+    <!-- ===== PROGRAMM-AUSWERTUNG (HR-KPIs) ===== -->
     <section class="panel" id="panel-auswertung">
       <div class="grid-3" id="fbStatRow" style="margin-bottom:22px"></div>
       <div class="grid-2">
         <div class="card">
-          <h3>Bewertungsverteilung</h3>
-          <p class="sub">Wie verteilen sich alle abgegebenen Sterne-Bewertungen?</p>
+          <h3>Sicherheit der Teilnehmenden</h3>
+          <p class="sub">Wie sicher fühlen sich die Teilnehmenden mit dem Gelernten? (Selbsteinschätzung)</p>
           <div id="distChart" style="margin-top:18px"></div>
+          <div class="divider"></div>
+          <h4 style="margin-bottom:8px">Programm-Kennzahlen für HR</h4>
+          <div id="hrKpis"></div>
         </div>
         <div class="card">
-          <h3>Auswertung nach Perspektive</h3>
-          <p class="sub">Durchschnitt getrennt nach Oldie- und Mentor-Feedback.</p>
+          <h3>Lernen in beide Richtungen</h3>
+          <p class="sub">Fortschritt &amp; Sicherheit getrennt nach Mentees und Mentor:innen – beide Seiten lernen.</p>
           <div id="byRole" style="margin-top:18px"></div>
           <div class="divider"></div>
-          <h4 style="margin-bottom:8px">Häufige Verbesserungswünsche</h4>
+          <h4 style="margin-bottom:8px">Stimmen aus dem Lernjournal</h4>
           <div id="improveThemes"></div>
         </div>
       </div>
@@ -266,6 +304,44 @@
             <button class="btn btn-primary btn-block" type="submit">Ergebnis festhalten</button>
           </form>
           <div id="resultList" style="margin-top:18px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== HR: ERGEBNIS-TRACKING (Auswertung) ===== -->
+    <section class="panel" id="panel-hrtracking">
+      <div class="hr-intro">
+        <h3>Ergebnis-Tracking des Programms</h3>
+        <p class="sub" style="margin:0">Programmweite Wirkungsmessung über alle aktiven Tandems – als Grundlage für die HR-Erfolgsmessung der Mentoring-Strategie.</p>
+      </div>
+      <div class="grid-4" id="hrKpiRow" style="margin:22px 0"></div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Durchführung &amp; Zielerreichung</h3>
+          <p class="sub">Wie konsequent werden Treffen umgesetzt und Lernziele erreicht?</p>
+          <div id="hrProgress" style="margin-top:18px"></div>
+        </div>
+        <div class="card">
+          <h3>Kompetenzzuwachs (Selbsteinschätzung)</h3>
+          <p class="sub">Aggregiert aus den Lernjournalen – ohne Bewertung einzelner Personen.</p>
+          <div id="hrCompetence" style="margin-top:18px"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h3>Strategische Einzahlung auf die HR-Handlungsfelder</h3>
+        <p class="sub">Welchen Beitrag das Tracking für die vier strategischen Felder belegt.</p>
+        <div class="hrgrid" id="hrFields" style="margin-top:18px"></div>
+      </div>
+      <div class="grid-2" style="margin-top:16px">
+        <div class="card">
+          <h3>Nachgefragte Lernthemen</h3>
+          <p class="sub">Wo im Unternehmen der digitale Lernbedarf am größten ist.</p>
+          <div id="hrTopics" style="margin-top:18px"></div>
+        </div>
+        <div class="card">
+          <h3>Beteiligung nach Bereich</h3>
+          <p class="sub">Aktive Tandems je Abteilung.</p>
+          <div id="hrDepts" style="margin-top:18px"></div>
         </div>
       </div>
     </section>

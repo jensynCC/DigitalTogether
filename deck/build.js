@@ -81,7 +81,7 @@ facts.forEach((f, i) => {
 
 card(s, MX, 5.0, W - 2 * MX, 1.55, ICE);
 s.addText("Die Kernfrage", { x: MX + 0.35, y: 5.18, w: 4, h: 0.4, fontFace: HF, fontSize: 14, color: BLUE_DK, bold: true, margin: 0 });
-s.addText("Wie verbinden wir die digitale Affinität jüngerer Mitarbeitender mit dem Erfahrungswissen langjähriger Kolleg:innen – strukturiert, freiwillig und messbar?",
+s.addText("Wie verbinden wir die digitale Affinität digital affiner Mitarbeitender mit dem Erfahrungswissen arbeitserfahrener Kolleg:innen – strukturiert, freiwillig und messbar?",
   { x: MX + 0.35, y: 5.55, w: W - 2 * MX - 0.7, h: 0.9, fontFace: BF, fontSize: 16, color: INK, italic: true, lineSpacingMultiple: 1.1, margin: 0 });
 
 /* ============================================================ */
@@ -127,7 +127,7 @@ pageTitle(s, "Lösungsansatz", "Zwei Perspektiven, ein gemeinsames Ziel");
 // left card – Oldie
 card(s, MX, 2.05, 5.85, 4.5);
 s.addShape(pres.shapes.RECTANGLE, { x: MX, y: 2.05, w: 5.85, h: 0.14, fill: { color: NAVY } });
-s.addText("Erfahrene Mitarbeitende  ·  „Oldies“", { x: MX + 0.35, y: 2.35, w: 5.2, h: 0.5, fontFace: HF, fontSize: 17, color: INK, bold: true, margin: 0 });
+s.addText("Erfahrene Mitarbeitende  ·  „Mentees“", { x: MX + 0.35, y: 2.35, w: 5.2, h: 0.5, fontFace: HF, fontSize: 17, color: INK, bold: true, margin: 0 });
 s.addText([
   { text: "Bringen ein", options: { bold: true, color: BLUE_DK, breakLine: true, fontSize: 12 } },
   { text: "Erfahrung & Branchenwissen", options: { bullet: true, breakLine: true } },
@@ -163,7 +163,7 @@ s.background = { color: WHITE };
 pageTitle(s, "Die Plattform", "Vom Profil zum messbaren Ergebnis");
 
 const steps = [
-  ["Profil & Login", "An- und Abmeldung als Oldie oder Mentor, Stärken und Lernwünsche erfassen"],
+  ["Profil & Login", "An- und Abmeldung als Mentee oder Mentor, Stärken und Lernwünsche erfassen"],
   ["Matching", "Algorithmus schlägt passende Tandems mit Match-Score vor"],
   ["Treffen", "Einzel- oder Regeltermine vereinbaren – wöchentlich bis monatlich"],
   ["Austausch", "Lernthemen gemeinsam bearbeiten, beide Seiten profitieren"],
@@ -197,7 +197,7 @@ const rows = [
   ["HR / People & Culture", "Programm-Owner: Konzept, Kommunikation, Matching-Qualität, Auswertung"],
   ["Führungskräfte", "Ermöglichen Zeit, fördern Teilnahme, wirken als Vorbilder"],
   ["Mentor:innen", "Geben digitales Wissen weiter, dokumentieren Lernthemen"],
-  ["Mentees (Oldies)", "Bringen Lernwünsche ein, gestalten Treffen aktiv mit"],
+  ["Mentees", "Bringen Lernwünsche ein, gestalten Treffen aktiv mit"],
   ["Betriebsrat / Datenschutz", "Begleitung von Freiwilligkeit, Vertraulichkeit & Datenschutz"],
 ];
 const tbl = [[
