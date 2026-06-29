@@ -120,6 +120,17 @@
               </div>
             </div>
 
+            <div class="form-section-label">Über dich <span>– hilft uns, menschlich gut zu matchen</span></div>
+            <div class="field"><label>Hobbys &amp; Interessen</label><input name="hobbies" placeholder="z. B. Wandern, Kochen, Fotografie, Vereinsarbeit"/></div>
+            <div class="grid-2" style="gap:14px">
+              <div class="field"><label>Arbeitsstil</label>
+                <select name="workStyle" id="workStyleSel"></select>
+              </div>
+              <div class="field"><label>Kommunikationsstil</label>
+                <select name="commStyle" id="commStyleSel"></select>
+              </div>
+            </div>
+
             <div class="field"><label id="goalLabel">Dein Ziel in einem Satz</label><textarea name="goal" placeholder="z. B. Ich möchte sicher mit Videokonferenzen und unserem Team-Chat umgehen."></textarea></div>
 
             <button class="btn btn-primary btn-block" type="submit" id="profileSubmit">Profil speichern &amp; Matching starten</button>
@@ -144,6 +155,36 @@
 
     <!-- ===== MATCHING ===== -->
     <section class="panel" id="panel-matching">
+      <div class="card intake-card" id="intakeCard">
+        <div class="row-between">
+          <div><h3>Kurze Einschätzung vor dem Matching</h3><p class="sub" style="margin:0">Damit wir dich passend zuordnen – dauert unter einer Minute.</p></div>
+          <button class="btn btn-ghost btn-sm" id="intakeToggle" type="button">Ausblenden</button>
+        </div>
+        <form id="intakeForm" style="margin-top:18px">
+          <div class="grid-2" style="gap:22px">
+            <div class="field"><label id="skillLabel">Wie sicher fühlst du dich aktuell mit digitalen Tools?</label>
+              <div class="stars" id="rateSkill" data-target="skillLevel">
+                <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+              </div>
+              <input type="hidden" name="skillLevel" value="0"/>
+              <div class="hint">1 = noch unsicher · 5 = sehr sicher</div>
+            </div>
+            <div class="field"><label id="needLabel">Wie groß ist dein digitaler Lernbedarf?</label>
+              <div class="stars" id="rateNeed" data-target="learningNeed">
+                <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+              </div>
+              <input type="hidden" name="learningNeed" value="0"/>
+              <div class="hint">1 = wenig · 5 = sehr hoch</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Was soll beim Match stärker zählen? <span style="font-weight:400;color:var(--muted)">(Mehrfachauswahl)</span></label>
+            <div class="chips" id="priorityChips"></div>
+          </div>
+          <button class="btn btn-primary" type="submit">Einschätzung speichern &amp; Matching aktualisieren</button>
+        </form>
+      </div>
+
       <div class="card">
         <div class="row-between">
           <div><h3 id="matchTitle">Dein Matching</h3><p class="sub" id="matchSub" style="margin:0">Auf Basis deiner Lernwünsche, Stärken und Verfügbarkeit.</p></div>
@@ -372,6 +413,22 @@
           <h3>Beteiligung nach Bereich</h3>
           <p class="sub">Aktive Tandems je Abteilung.</p>
           <div id="hrDepts" style="margin-top:18px"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h3>Skills, Lernbedarfe &amp; Beteiligung (anonymisiert)</h3>
+        <p class="sub">Aggregierte, anonyme Auswertung – keine Rückschlüsse auf einzelne Personen.</p>
+        <div class="grid-4" id="hrPeopleRow" style="margin:18px 0"></div>
+        <div class="grid-2">
+          <div>
+            <h4 style="margin-bottom:10px">Top Skills im Programm</h4>
+            <div id="hrSkills"></div>
+          </div>
+          <div>
+            <h4 style="margin-bottom:10px">Selbsteingeschätztes Digital-Niveau der Mentees</h4>
+            <div id="hrSkillLevels"></div>
+          </div>
         </div>
       </div>
     </section>
