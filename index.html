@@ -303,13 +303,19 @@
   document.getElementById('evWho').textContent = ev.audience || '';
 
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function setNum(id, value) {
+    var el = document.getElementById(id);
+    if (!el || el.textContent === value) return;
+    el.textContent = value;
+    el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
+  }
   function tick() {
     var diff = dt - new Date();
     var cd = document.getElementById('evCountdown');
     if (isNaN(dt) || diff <= 0) { cd.innerHTML = '<div class="cd-live">Es geht gleich los –<br>jetzt anmelden!</div>'; return; }
-    document.getElementById('cdDays').textContent = Math.floor(diff / 86400000);
-    document.getElementById('cdHours').textContent = pad(Math.floor(diff % 86400000 / 3600000));
-    document.getElementById('cdMins').textContent = pad(Math.floor(diff % 3600000 / 60000));
+    setNum('cdDays', String(Math.floor(diff / 86400000)));
+    setNum('cdHours', pad(Math.floor(diff % 86400000 / 3600000)));
+    setNum('cdMins', pad(Math.floor(diff % 3600000 / 60000)));
   }
   tick(); setInterval(tick, 30000);
 

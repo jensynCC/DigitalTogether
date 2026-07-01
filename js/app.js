@@ -564,14 +564,16 @@ function renderMatchCard(partnerId) {
       <button class="btn btn-outline btn-sm" onclick="openDissolve()">Match auflösen</button>
       <button class="btn btn-ghost btn-sm" onclick="document.getElementById('helpCard').scrollIntoView({behavior:'smooth'})">Probleme? Hilfe &amp; Kontakt</button>
     </div>
-    <div id="dissolveBox" style="display:none;margin-top:16px;background:var(--bg-cream);border:1px solid var(--line);border-radius:12px;padding:16px">
-      <div class="field" style="margin-bottom:10px"><label>Grund für die Auflösung <span style="font-weight:400;color:var(--muted)">(optional – nur HR sieht den Grund)</span></label>
-        <textarea id="dissolveReason" placeholder="z. B. terminlich schwierig, fachlich doch nicht passend, persönlich kein gutes Match …"></textarea></div>
-      <button class="btn btn-primary btn-sm" onclick="confirmDissolve()">Auflösung bestätigen</button>
-      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('dissolveBox').style.display='none'">Abbrechen</button>
+    <div id="dissolveBox" class="dissolve-box">
+      <div class="dissolve-box-inner">
+        <div class="field" style="margin-bottom:10px"><label>Grund für die Auflösung <span style="font-weight:400;color:var(--muted)">(optional – nur HR sieht den Grund)</span></label>
+          <textarea id="dissolveReason" placeholder="z. B. terminlich schwierig, fachlich doch nicht passend, persönlich kein gutes Match …"></textarea></div>
+        <button class="btn btn-primary btn-sm" onclick="confirmDissolve()">Auflösung bestätigen</button>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('dissolveBox').classList.remove('open')">Abbrechen</button>
+      </div>
     </div>`;
 }
-window.openDissolve = () => { const b=$('#dissolveBox'); if(b) b.style.display = b.style.display==='none'?'block':'none'; };
+window.openDissolve = () => { const b=$('#dissolveBox'); if(b) b.classList.toggle('open'); };
 window.confirmDissolve = () => {
   const reason = ($('#dissolveReason').value||'').trim();
   const partnerId = isOldie() ? state.mentorId : state.menteeId;
