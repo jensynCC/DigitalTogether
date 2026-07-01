@@ -964,6 +964,9 @@ function renderDissolved() {
     </div></div>`).join('');
 }
 
+/* Ampel-Ton nach Schwellenwert – für Akzentstreifen der Kacheln */
+function toneOf(pct) { return pct >= 70 ? 'success' : pct >= 50 ? 'warning' : 'danger'; }
+
 function renderHRDashboard() {
   if (!isHR()) return;
   renderMatchmaker();
@@ -981,12 +984,32 @@ function renderHRDashboard() {
   const avgProg = meanOf('progress'), avgConf = meanOf('confidence');
   const recRate = Math.round(tandems.filter(t=>t.recommend).length/tandems.length*100);
 
-  // KPI-Reihe
+  // Registrierungs-/Match-Zahlen (auch für den Hero-Bereich gebraucht)
+  const hasMentee = state.menteeProfile && (state.menteeProfile.topics||[]).length;
+  const hasMentor = state.mentorProfile && (state.mentorProfile.topics||[]).length;
+  const mentees = DEMO_PEOPLE.menteesRegistered + (hasMentee ? 1 : 0);
+  const mentors = DEMO_PEOPLE.mentorsRegistered + (hasMentor ? 1 : 0);
+  const matched = DEMO_PEOPLE.matched + ((state.mentorId || state.menteeId) ? 1 : 0);
+  const waiting = Math.max(0, mentees - matched) + Math.max(0, mentors - matched);
+  const matchRate = mentees ? Math.round(matched / mentees * 100) : 0;
+
+  // Hero: Match-Quote + Verlauf (illustrativer Trend – als Demo-Daten wie der Rest des Programm-Pools)
+  const trendShape = [.42, .5, .58, .55, .7, .8, 1];
+  $('#hrHero').innerHTML = `
+    <div class="hr-hero-row">
+      <div>
+        <div class="hr-hero-num">${matchRate}<span>%</span></div>
+        <div class="hr-hero-sub">${matched} von ${mentees} Mentees gematcht &middot; ${waiting} wartend</div>
+      </div>
+      <div class="hr-spark">${trendShape.map((f,i)=>`<span class="${i===trendShape.length-1?'hi':''}" style="height:${Math.round(f*40)}px"></span>`).join('')}</div>
+    </div>`;
+
+  // KPI-Reihe – Ampelfarben statt einheitlichem Blau
   $('#hrKpiRow').innerHTML = `
-    <div class="stat"><div class="big">${tandems.length}</div><div class="lbl">Aktive Tandems</div></div>
-    <div class="stat"><div class="big">${doneRate}%</div><div class="lbl">Durchführungsquote Treffen</div></div>
-    <div class="stat"><div class="big">${goalRate}%</div><div class="lbl">Zielerreichungsquote</div></div>
-    <div class="stat"><div class="big">${results}</div><div class="lbl">Dokumentierte Ergebnisse</div></div>`;
+    <div class="stat tone-accent"><div class="big">${tandems.length}</div><div class="lbl">Aktive Tandems</div></div>
+    <div class="stat tone-${toneOf(doneRate)}"><div class="big">${doneRate}%</div><div class="lbl">Durchführungsquote Treffen</div></div>
+    <div class="stat tone-${toneOf(goalRate)}"><div class="big">${goalRate}%</div><div class="lbl">Zielerreichungsquote</div></div>
+    <div class="stat tone-accent"><div class="big">${results}</div><div class="lbl">Dokumentierte Ergebnisse</div></div>`;
 
   // Durchführung & Zielerreichung
   $('#hrProgress').innerHTML =
@@ -1021,33 +1044,35 @@ function renderHRDashboard() {
         <div class="dist-bar"><span style="width:${c/maxT*100}%"></span></div><span class="val">${c}</span></div>`).join('')
     : '<p class="meta">Keine Daten.</p>';
 
-  // Beteiligung nach Bereich
-  const dc = {};
-  tandems.forEach(t => dc[t.dept]=(dc[t.dept]||0)+1);
-  const depts = Object.entries(dc).sort((a,b)=>b[1]-a[1]);
-  const maxD = Math.max(...depts.map(d=>d[1]), 1);
-  $('#hrDepts').innerHTML = depts.map(([d,c])=>`<div class="dist-row"><span class="lbl" style="width:130px;white-space:normal">${esc(d)}</span>
-    <div class="dist-bar"><span style="width:${c/maxD*100}%;background:var(--green)"></span></div><span class="val">${c}</span></div>`).join('');
+  // Beteiligung nach Bereich – als Status-Liste (Punkt + Quote) statt gleichförmiger Balken,
+  // damit schwache Abteilungen (z. B. Einkauf) sofort auffallen statt in der Balkenreihe unterzugehen
+  const deptAgg = {};
+  tandems.forEach(t => {
+    const d = deptAgg[t.dept] || (deptAgg[t.dept] = { planned: 0, done: 0 });
+    d.planned += t.meetingsPlanned; d.done += t.meetingsDone;
+  });
+  const deptRows = Object.entries(deptAgg)
+    .map(([dept, v]) => ({ dept, planned: v.planned, done: v.done, rate: v.planned ? Math.round(v.done/v.planned*100) : 0 }))
+    .sort((a,b) => a.rate - b.rate);
+  $('#hrDepts').innerHTML = `<div class="dept-list">${deptRows.map(r => `
+    <div class="dept-row">
+      <span class="dept-dot ${toneOf(r.rate)}"></span>
+      <span class="dept-name">${esc(r.dept)}</span>
+      <span class="dept-meta">${r.done}/${r.planned} Treffen</span>
+      <span class="dept-rate">${r.rate}%</span>
+    </div>`).join('')}</div>`;
 
   // Skills, Lernbedarfe & Beteiligung (anonymisiert) – Demo + lokales Profil
-  const hasMentee = state.menteeProfile && (state.menteeProfile.topics||[]).length;
-  const hasMentor = state.mentorProfile && (state.mentorProfile.topics||[]).length;
-  const mentees = DEMO_PEOPLE.menteesRegistered + (hasMentee ? 1 : 0);
-  const mentors = DEMO_PEOPLE.mentorsRegistered + (hasMentor ? 1 : 0);
-  const matched = DEMO_PEOPLE.matched + ((state.mentorId || state.menteeId) ? 1 : 0);
-  const waiting = Math.max(0, mentees - matched) + Math.max(0, mentors - matched);
   $('#hrPeopleRow').innerHTML = `
-    <div class="stat"><div class="big">${mentees}</div><div class="lbl">Mentees (registriert)</div></div>
-    <div class="stat"><div class="big">${mentors}</div><div class="lbl">Mentor:innen (registriert)</div></div>
-    <div class="stat"><div class="big">${matched}</div><div class="lbl">Gematchte Tandems</div></div>
-    <div class="stat"><div class="big">${waiting}</div><div class="lbl">Wartend (ohne Match)</div></div>`;
+    <div class="stat tone-accent"><div class="big">${mentees}</div><div class="lbl">Mentees (registriert)</div></div>
+    <div class="stat tone-accent"><div class="big">${mentors}</div><div class="lbl">Mentor:innen (registriert)</div></div>
+    <div class="stat tone-success"><div class="big">${matched}</div><div class="lbl">Gematchte Tandems</div></div>
+    <div class="stat ${waiting>0?'tone-warning':'tone-accent'}"><div class="big">${waiting}</div><div class="lbl">Wartend (ohne Match)</div></div>`;
 
   const skills = Object.assign({}, DEMO_SKILLS);
   [state.menteeProfile, state.mentorProfile].forEach(pr => { if (pr) (pr.strengths||[]).forEach(s => skills[s] = (skills[s]||0)+1); });
   const topSkills = Object.entries(skills).sort((a,b)=>b[1]-a[1]).slice(0,7);
-  const maxSk = Math.max(...topSkills.map(s=>s[1]), 1);
-  $('#hrSkills').innerHTML = topSkills.map(([s,c])=>`<div class="dist-row"><span class="lbl" style="width:175px;white-space:normal">${esc(s)}</span>
-    <div class="dist-bar"><span style="width:${c/maxSk*100}%"></span></div><span class="val">${c}</span></div>`).join('');
+  $('#hrSkills').innerHTML = `<div class="skill-tags">${topSkills.map(([s,c])=>`<span class="skill-pill">${esc(s)} <b>${c}</b></span>`).join('')}</div>`;
 
   const levels = Object.assign({}, DEMO_SKILL_LEVELS);
   if (hasMentee && state.menteeProfile.skillLevel) levels[state.menteeProfile.skillLevel] = (levels[state.menteeProfile.skillLevel]||0)+1;
