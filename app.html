@@ -21,17 +21,13 @@
     <h2>Willkommen zurück</h2>
     <p>Melde dich an – wie möchtest du teilnehmen?</p>
     <div class="role-pick" id="rolePick">
-      <div class="role-opt oldie" data-role="oldie">
-        <div class="r-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/><path d="M19 8v6M16 11h6"/></svg></div>
-        <b>Mentee</b><span>Erfahren – ich lerne digitale Tools</span>
-      </div>
-      <div class="role-opt mentor" data-role="mentor">
-        <div class="r-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7l9 5 9-5-9-5z"/><path d="M3 7v6l9 5 9-5V7"/></svg></div>
-        <b>Mentor</b><span>Digital affin – ich gebe Wissen weiter</span>
+      <div class="role-opt user" data-role="user">
+        <div class="r-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <b>Mitarbeitende:r</b><span>Mentor:in, Mentee oder beides – dein Profil entscheidet</span>
       </div>
       <div class="role-opt hr" data-role="hr">
         <div class="r-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg></div>
-        <b>HR-Personalverantwortliche</b><span>Ich werte das Ergebnis-Tracking des Programms aus</span>
+        <b>HR-Personalverantwortliche</b><span>Ich matche Tandems und werte das Programm aus</span>
       </div>
     </div>
     <div class="field" style="text-align:left"><label>Dein Name</label><input id="loginName" placeholder="Vor- und Nachname"/></div>
@@ -49,7 +45,6 @@
     </a>
     <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
       <span id="roleBadge"></span>
-      <button class="btn btn-outline btn-sm" id="switchRoleBtn" style="display:none"></button>
       <button class="btn btn-ghost btn-sm" id="logoutBtn">Abmelden</button>
     </div>
   </div>
@@ -72,8 +67,9 @@
     <!-- In-App-Benachrichtigungen -->
     <div id="noticeBar" style="display:none"></div>
 
-    <!-- Tabs -->
-    <div class="tabs" id="tabs">
+    <!-- Navigation -->
+    <div class="nav-eyebrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg> Bereich wählen</div>
+    <div class="tabs" id="tabs" role="tablist">
       <button class="tab" data-tab="hrtracking"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg> Ergebnis-Tracking</button>
       <button class="tab active" data-tab="profil"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <span data-label="profil">Profil</span></button>
       <button class="tab" data-tab="matching"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg> <span data-label="matching">Matching</span></button>
@@ -84,82 +80,87 @@
       <button class="tab" data-tab="ergebnisse"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg> Ergebnisse &amp; Tracking</button>
     </div>
 
-    <!-- ===== PROFIL ===== -->
+    <!-- ===== PROFIL (Bento: eine Person, beide Seiten) ===== -->
     <section class="panel active" id="panel-profil">
-      <div class="card">
-        <h3 id="profileFormTitle">Anmeldung &amp; Profil</h3>
-        <p class="sub" id="profileFormSub">Erzähl uns von dir – darauf baut das Matching auf.</p>
-        <form id="profileForm" style="margin-top:18px">
-          <div class="profile-cols">
-            <!-- Fachliches Profil -->
-            <div class="prof-col prof-col-main">
-              <div class="col-head"><span class="col-dot"></span>Fachliches Profil</div>
-              <div class="field"><label>Name</label><input name="name" required placeholder="z. B. Renate Hoffmann"/></div>
-              <div class="grid-2" style="gap:14px">
-                <div class="field"><label>Abteilung</label><input name="department" placeholder="z. B. Vertrieb"/></div>
-                <div class="field"><label>Rolle / Position</label><input name="position" placeholder="z. B. Teamleitung"/></div>
-              </div>
-              <div class="field"><label>E-Mail (optional)</label><input name="email" type="email" placeholder="name@firma.de"/></div>
-              <div class="field">
-                <label id="topicLabel">Worüber möchtest du gern lernen? (Lernwünsche)</label>
-                <div class="chips" id="topicChips"></div>
-                <div class="hint" id="topicHint">Wähle alle passenden Themen aus.</div>
-              </div>
-              <div class="field" id="expField">
-                <label id="expLabel">Welches Erfahrungswissen gibst du weiter?</label>
-                <div class="chips" id="expChips"></div>
-                <div class="hint" id="expHint">Relational Mentoring lebt vom Austausch in beide Richtungen.</div>
-              </div>
-              <div class="field">
-                <label>Deine Stärken, die du einbringst</label>
-                <div class="chips" id="strengthChips"></div>
-              </div>
-              <div class="grid-2" style="gap:14px">
-                <div class="field"><label>Bevorzugtes Format</label>
-                  <select name="format"><option>Persönlich vor Ort</option><option>Video-Call</option><option>Telefon</option><option>Flexibel</option></select>
-                </div>
-                <div class="field"><label>Verfügbarkeit</label>
-                  <select name="availability"><option>Vormittags</option><option>Nachmittags</option><option>Flexibel</option></select>
-                </div>
-              </div>
-              <div class="field"><label id="goalLabel">Dein Ziel in einem Satz</label><textarea name="goal" placeholder="z. B. Ich möchte sicher mit Videokonferenzen und unserem Team-Chat umgehen."></textarea></div>
-            </div>
-
-            <!-- Über dich -->
-            <div class="prof-col prof-col-about">
-              <div class="col-head"><span class="col-dot blue"></span>Über dich</div>
-              <p class="col-note">Persönliches für die Gemeinsamkeiten &amp; Gesprächsanlässe im Tandem – fließt mit ins Matching.</p>
-              <div class="field">
-                <label>Interessen &amp; Hobbys</label>
-                <div class="chips" id="interestChips"></div>
-                <div class="hint">Auswahl statt Freitext – so finden wir Gemeinsamkeiten.</div>
-              </div>
-              <div class="field"><label>Nächstes Reiseziel</label>
-                <select name="nextTravel" id="travelSel"></select>
-              </div>
-              <div class="field"><label>Arbeitsstil</label>
-                <select name="workStyle" id="workStyleSel"></select>
-              </div>
-              <div class="field"><label>Kommunikationsstil</label>
-                <select name="commStyle" id="commStyleSel"></select>
-              </div>
-              <input type="hidden" name="hobbies"/>
-            </div>
+      <form id="profileForm" class="bento">
+        <div class="tile b-person">
+          <div class="col-head"><span class="col-dot"></span>Person</div>
+          <p class="tile-note">Deine Kopfdaten – sie gelten für beide Seiten deines Profils.</p>
+          <div class="person-grid">
+            <div class="field"><label>Name</label><input name="name" required placeholder="z. B. Renate Hoffmann"/></div>
+            <div class="field"><label>Abteilung</label><input name="department" placeholder="z. B. Vertrieb"/></div>
+            <div class="field"><label>Rolle / Position</label><input name="position" placeholder="z. B. Teamleitung"/></div>
+            <div class="field"><label>E-Mail (optional)</label><input name="email" type="email" placeholder="name@firma.de"/></div>
           </div>
+        </div>
 
-          <button class="btn btn-primary btn-block" type="submit" id="profileSubmit" style="margin-top:8px">Profil speichern &amp; Matching starten</button>
-        </form>
-      </div>
+        <div class="tile b-mentor">
+          <div class="col-head"><span class="col-dot"></span>Hier bin ich Mentor:in</div>
+          <p class="tile-note">Das kann ich vermitteln – <b>mehrere Themen möglich</b>. Leer lassen, wenn du (noch) nicht vermitteln möchtest.</p>
+          <div class="field">
+            <label>Digitale Kompetenzen <span class="multi-hint">Mehrfachauswahl</span></label>
+            <div class="chips multi" id="mentorDigChips"></div>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>Arbeitserfahrung <span class="multi-hint">Mehrfachauswahl</span></label>
+            <div class="chips multi" id="mentorExpChips"></div>
+          </div>
+        </div>
+
+        <div class="tile b-mentee">
+          <div class="col-head"><span class="col-dot blue"></span>Hier bin ich Mentee</div>
+          <p class="tile-note">Das möchte ich lernen – <b>mehrere Themen möglich</b>. Leer lassen, wenn du gerade nichts lernen möchtest.</p>
+          <div class="field">
+            <label>Digitale Kompetenzen <span class="multi-hint">Mehrfachauswahl</span></label>
+            <div class="chips multi" id="menteeDigChips"></div>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>Arbeitserfahrung <span class="multi-hint">Mehrfachauswahl</span></label>
+            <div class="chips multi" id="menteeExpChips"></div>
+          </div>
+        </div>
+
+        <div class="tile b-strengths">
+          <div class="col-head"><span class="col-dot"></span>Stärken</div>
+          <div class="field" style="margin-bottom:0"><label>Was du einbringst <span class="multi-hint">Mehrfachauswahl</span></label><div class="chips multi" id="strengthChips"></div></div>
+        </div>
+
+        <div class="tile b-format">
+          <div class="col-head"><span class="col-dot"></span>Format &amp; Verfügbarkeit</div>
+          <div class="field"><label>Bevorzugtes Format</label>
+            <select name="format"><option>Persönlich vor Ort</option><option>Video-Call</option><option>Telefon</option><option>Flexibel</option></select>
+          </div>
+          <div class="field" style="margin-bottom:0"><label>Verfügbarkeit</label>
+            <select name="availability"><option>Vormittags</option><option>Nachmittags</option><option>Flexibel</option></select>
+          </div>
+        </div>
+
+        <div class="tile b-styles">
+          <div class="col-head"><span class="col-dot blue"></span>Präferenzen</div>
+          <div class="field"><label>Arbeitsstil</label>
+            <select name="workStyle" id="workStyleSel"></select>
+          </div>
+          <div class="field" style="margin-bottom:0"><label>Kommunikationsstil</label>
+            <select name="commStyle" id="commStyleSel"></select>
+          </div>
+        </div>
+
+        <div class="tile b-goal">
+          <div class="col-head"><span class="col-dot"></span>Mein Ziel</div>
+          <div class="field"><label>In einem Satz</label><textarea name="goal" placeholder="z. B. Ich möchte sicher mit Videokonferenzen umgehen – und dafür mein Vertriebswissen weitergeben."></textarea></div>
+          <button class="btn btn-primary btn-block" type="submit" id="profileSubmit">Profil speichern</button>
+        </div>
+      </form>
 
       <div class="grid-2" style="margin-top:22px">
         <div class="card" id="profileSummary" style="display:none"></div>
         <div class="card">
           <h3>So geht's weiter</h3>
           <ul class="timeline" style="margin-top:14px">
-            <li><b>Profil erstellen</b><div class="t-date">Fachliches &amp; Über dich angeben</div></li>
-            <li><b>Match erhalten</b><div class="t-date">HR ordnet dein Tandem zu (Wunsch möglich)</div></li>
+            <li><b>Profil erstellen</b><div class="t-date">Mentor:in-Seite, Mentee-Seite oder beides angeben</div></li>
+            <li><b>Match erhalten</b><div class="t-date">HR ordnet euer Tandem zu (Wunsch möglich)</div></li>
             <li><b>Treffen vereinbaren</b><div class="t-date">Einzel- oder Regeltermine festlegen</div></li>
-            <li><b>Wissen austauschen</b><div class="t-date">Themen gemeinsam bearbeiten</div></li>
+            <li><b>Wissen austauschen</b><div class="t-date">In beide Richtungen – jede:r lernt, jede:r vermittelt</div></li>
             <li><b>Reflektieren &amp; Ergebnisse</b><div class="t-date">Lernjournal führen, Fortschritt festhalten</div></li>
           </ul>
         </div>
@@ -170,6 +171,30 @@
     <section class="panel" id="panel-matching">
       <!-- Zugeordnetes Match (von HR) -->
       <div class="card match-card" id="matchCard" style="display:none"></div>
+
+      <!-- Über dich: nice to know, nur fürs Tandem sichtbar -->
+      <div class="card about-card" id="aboutCard">
+        <div class="row-between">
+          <div><h3>Über dich <span class="pill" style="background:var(--green-light);color:var(--green);font-weight:600;vertical-align:middle">Freiwillig</span></h3><p class="sub" style="margin:0">Nice to know statt Matching-Kriterium – diese Angaben zählen <b>nicht</b> ins Matching.</p></div>
+          <button class="btn btn-ghost btn-sm" id="aboutToggle" type="button">Ausblenden</button>
+        </div>
+        <div class="privacy-note">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>Die Angabe ist <b>freiwillig</b>. Sichtbar ist sie ausschließlich für deine zugeordnete Tandem-Partner:in – als Gesprächseinstieg beim Kennenlernen. HR und andere Teilnehmende sehen sie nicht.</span>
+        </div>
+        <form id="aboutForm" style="margin-top:18px">
+          <div class="field">
+            <label>Interessen &amp; Hobbys <span class="multi-hint">Mehrfachauswahl · optional</span></label>
+            <div class="chips multi" id="interestChips"></div>
+          </div>
+          <div class="grid-2" style="gap:14px">
+            <div class="field"><label>Nächstes Reiseziel</label>
+              <select name="nextTravel" id="travelSel"></select>
+            </div>
+            <div class="field" style="display:flex;align-items:flex-end"><button class="btn btn-outline" type="submit" style="width:100%">Über dich speichern</button></div>
+          </div>
+        </form>
+      </div>
 
       <div class="card intake-card" id="intakeCard">
         <div class="row-between">
@@ -185,7 +210,7 @@
               <input type="hidden" name="skillLevel" value="0"/>
               <div class="hint">1 = noch unsicher · 5 = sehr sicher</div>
             </div>
-            <div class="field"><label id="needLabel">Wie groß ist dein digitaler Lernbedarf?</label>
+            <div class="field"><label id="needLabel">Wie groß ist dein Lernbedarf?</label>
               <div class="stars" id="rateNeed" data-target="learningNeed">
                 <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
               </div>
@@ -194,8 +219,8 @@
             </div>
           </div>
           <div class="field">
-            <label>Was soll beim Match stärker zählen? <span style="font-weight:400;color:var(--muted)">(Mehrfachauswahl)</span></label>
-            <div class="chips" id="priorityChips"></div>
+            <label>Was soll beim Match stärker zählen? <span class="multi-hint">Mehrfachauswahl</span></label>
+            <div class="chips multi" id="priorityChips"></div>
           </div>
           <button class="btn btn-primary" type="submit">Einschätzung speichern &amp; Matching aktualisieren</button>
         </form>
@@ -203,10 +228,10 @@
 
       <div class="card" id="suggestCard">
         <div class="row-between">
-          <div><h3 id="matchTitle">Vorschläge für dein Match</h3><p class="sub" id="matchSub" style="margin:0">Auf Basis deiner Lernwünsche, Stärken, Präferenzen und Verfügbarkeit.</p></div>
-          <button class="btn btn-outline btn-sm" id="rematchBtn">Neu berechnen</button>
+          <div><h3 id="matchTitle">Vorschläge für dein Tandem</h3><p class="sub" id="matchSub" style="margin:0">Was du lernen möchtest ∩ was andere vermitteln – und umgekehrt. Gegenseitigkeit zählt extra.</p></div>
+          <span class="wish-badge">Wünsche: <b id="wishCounter">0 / 3</b></span>
         </div>
-        <p class="hint" style="margin-top:6px">Die finale Zuordnung trifft HR. Du kannst hier deinen <b>Wunsch</b> markieren – HR berücksichtigt ihn.</p>
+        <p class="hint" style="margin-top:6px">Die finale Zuordnung trifft HR. Du kannst <b>bis zu 3 Wunsch-Partner:innen</b> markieren – HR berücksichtigt sie bei der Zuordnung.</p>
         <div id="matchList" style="margin-top:16px"></div>
       </div>
 
@@ -262,7 +287,7 @@
           <p class="sub">Halte fest, was ihr gemeinsam bearbeitet – beide Seiten lernen.</p>
           <form id="topicForm" style="margin-top:16px">
             <div class="field"><label>Thema / Kompetenz</label><input name="title" required placeholder="z. B. Digitale Signaturen"/></div>
-            <div class="field"><label>Richtung</label><select name="direction"><option value="mentee">Mentee lernt (von Mentor)</option><option value="mentor">Mentee gibt weiter (an Mentor)</option></select></div>
+            <div class="field"><label>Richtung</label><select name="direction"><option value="mentee">Ich lerne (mein Match vermittelt)</option><option value="mentor">Ich vermittle (mein Match lernt)</option></select></div>
             <div class="field"><label>Notizen / nächste Schritte</label><textarea name="notes" placeholder="Was wurde geübt? Was ist offen?"></textarea></div>
             <button class="btn btn-primary btn-block" type="submit">Lernthema hinzufügen</button>
           </form>
@@ -281,7 +306,15 @@
           <h3>Lernjournal &amp; Selbstreflexion</h3>
           <p class="sub">Hier bewertest du <b>nicht</b> dein Gegenüber, sondern reflektierst deinen eigenen Fortschritt.</p>
           <form id="feedbackForm" style="margin-top:16px">
-            <div class="field"><label>Bezug</label><select name="ref" id="feedbackRef"></select></div>
+            <div class="grid-2" style="gap:14px">
+              <div class="field"><label>Bezug</label><select name="ref" id="feedbackRef"></select></div>
+              <div class="field"><label>Perspektive</label>
+                <select name="direction">
+                  <option value="learned">Ich habe gelernt (Mentee-Rolle)</option>
+                  <option value="taught">Ich habe vermittelt (Mentor:innen-Rolle)</option>
+                </select>
+              </div>
+            </div>
 
             <div class="field"><label>Wie viel Fortschritt nimmst du wahr?</label>
               <div class="stars" id="rateProgress" data-target="progress">
@@ -409,8 +442,11 @@
 
       <div class="card" style="margin-top:16px">
         <h3>Matchmaker – Tandems zuordnen</h3>
-        <p class="sub">Du triffst die finale Zuordnung auf Basis der Matching-Faktoren. Wünsche der Teilnehmenden sind markiert; nach dem Zuweisen werden die Beteiligten benachrichtigt.</p>
+        <p class="sub">Du paarst zwei Personen zu einem Tandem – innerhalb des Tandems fließt Wissen in beide Richtungen. Wünsche der Teilnehmenden sind markiert; nach dem Zuweisen werden die Beteiligten benachrichtigt.</p>
         <div id="matchmaker" style="margin-top:16px"></div>
+        <div class="divider"></div>
+        <h4 style="margin-bottom:8px">Aktive Tandems</h4>
+        <div id="mmActive"></div>
       </div>
 
       <div class="card" style="margin-top:16px">

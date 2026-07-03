@@ -1,7 +1,7 @@
 /* ===== DigitalTogether – Relational Mentoring App Logic ===== */
 /* Alle Daten werden lokal im Browser (localStorage) gespeichert. */
 
-const KEY = 'digitaltogether_v2';
+const KEY = 'digitaltogether_v3';
 
 const TOPICS = [
   'Videokonferenzen', 'Team-Chat & Messenger', 'E-Mail & Kalender',
@@ -49,50 +49,57 @@ const HR_CONTACT = {
   email: 'mentoring@firma.de', phone: '+49 30 1234-567'
 };
 
-/* Demo-Mentor:innen-Pool für das Matching (Oldie-Sicht).
-   teaches = digitale Themen (Mentor → Oldie), expTopics = Erfahrungswissen, das der Mentor lernen möchte (Oldie → Mentor) */
-const MENTOR_POOL = [
-  { id:'m1', name:'Jonas Becker',  position:'Werkstudent IT', dept:'IT',
-    teaches:['Videokonferenzen','Team-Chat & Messenger','KI-Tools','Online-Sicherheit'],
-    expTopics:['Branchen- & Fachwissen','Kundenbeziehungen & Netzwerk'],
+/* Personen-Pool (Demo): Kolleg:innen im Programm. Relational Mentoring – jede Person kann
+   Mentor:in, Mentee oder beides sein. teach* = vermittelt, want* = möchte lernen. */
+const PERSON_POOL = [
+  { id:'p1', name:'Jonas Becker', position:'Werkstudent IT', dept:'IT',
+    teachDigital:['Videokonferenzen','Team-Chat & Messenger','KI-Tools','Online-Sicherheit'], teachExp:[],
+    wantDigital:[], wantExp:['Branchen- & Fachwissen','Kundenbeziehungen & Netzwerk'],
     strengths:['Digitale Affinität','Geduld'], format:'Video-Call', availability:'Nachmittags',
     workStyle:'Flexibel & spontan', commStyle:'Direkt & sachlich',
     interests:['Gaming','Sport & Fitness','Kino & Serien'], nextTravel:'Asien' },
-  { id:'m2', name:'Lena Vogt', position:'Junior Marketing', dept:'Marketing',
-    teaches:['Social Media','Smartphone-Apps','Cloud & Dateien teilen','KI-Tools'],
-    expTopics:['Verhandlung & Gesprächsführung','Unternehmensgeschichte & Kultur'],
+  { id:'p2', name:'Renate Hoffmann', position:'Teamleitung', dept:'Vertrieb',
+    teachDigital:[], teachExp:['Kundenbeziehungen & Netzwerk','Verhandlung & Gesprächsführung','Branchen- & Fachwissen'],
+    wantDigital:['Videokonferenzen','Online-Sicherheit','Team-Chat & Messenger'], wantExp:[],
+    strengths:['Branchenwissen','Kundenkontakt','Netzwerk'], format:'Persönlich vor Ort', availability:'Vormittags',
+    workStyle:'Strukturiert & planvoll', commStyle:'Persönlich & einfühlsam',
+    interests:['Wandern & Natur','Lesen','Musik & Konzerte'], nextTravel:'Italien' },
+  { id:'p3', name:'Lena Vogt', position:'Junior Marketing', dept:'Marketing',
+    teachDigital:['Social Media','Smartphone-Apps','Cloud & Dateien teilen','KI-Tools'], teachExp:[],
+    wantDigital:[], wantExp:['Verhandlung & Gesprächsführung','Unternehmensgeschichte & Kultur'],
     strengths:['Kreativität','Digitale Affinität'], format:'Persönlich vor Ort', availability:'Vormittags',
     workStyle:'Teamorientiert', commStyle:'Persönlich & einfühlsam',
     interests:['Fotografie','Reisen','Kunst & Kultur'], nextTravel:'Städtetrip Europa' },
-  { id:'m3', name:'Ali Demir', position:'Auszubildender', dept:'Vertrieb',
-    teaches:['E-Mail & Kalender','Office / Tabellen','Digitale Signaturen','Cloud & Dateien teilen'],
-    expTopics:['Strukturierte Arbeitsweise','Berufliche Orientierung'],
-    strengths:['Geduld','Strukturierte Arbeitsweise'], format:'Flexibel', availability:'Flexibel',
-    workStyle:'Strukturiert & planvoll', commStyle:'Ausführlich & erklärend',
-    interests:['Radfahren','Kochen & Backen','Gaming'], nextTravel:'Italien' },
-  { id:'m4', name:'Sophie Klein', position:'Trainee', dept:'HR',
-    teaches:['Online-Sicherheit','E-Mail & Kalender','Smartphone-Apps','Videokonferenzen'],
-    expTopics:['Konfliktlösung','Entscheidungsfindung','Gelassenheit & Resilienz'],
+  { id:'p4', name:'Werner Krause', position:'Sachbearbeiter', dept:'Buchhaltung',
+    teachDigital:[], teachExp:['Strukturierte Arbeitsweise','Prozess- & Abläufe-Know-how'],
+    wantDigital:['Office / Tabellen','Cloud & Dateien teilen','Digitale Signaturen'], wantExp:[],
+    strengths:['Strukturierte Arbeitsweise','Verlässlichkeit'], format:'Video-Call', availability:'Nachmittags',
+    workStyle:'Detailorientiert', commStyle:'Ausführlich & erklärend',
+    interests:['Gartenarbeit','Heimwerken','Radfahren'], nextTravel:'Staycation / Zuhause' },
+  { id:'p5', name:'Sophie Klein', position:'Trainee', dept:'HR',
+    teachDigital:['Online-Sicherheit','E-Mail & Kalender','Smartphone-Apps','Videokonferenzen'], teachExp:[],
+    wantDigital:[], wantExp:['Konfliktlösung','Entscheidungsfindung','Gelassenheit & Resilienz'],
     strengths:['Geduld','Mentoring-Erfahrung'], format:'Video-Call', availability:'Vormittags',
     workStyle:'Detailorientiert', commStyle:'Persönlich & einfühlsam',
-    interests:['Yoga & Achtsamkeit','Lesen','Wandern & Natur'], nextTravel:'Skandinavien' }
-];
-
-/* Demo-Mentees für die Mentor-Sicht.
-   topics = digitale Lernwünsche (Mentor → Oldie), expTopics = Erfahrungswissen, das der Oldie weitergibt (Oldie → Mentor) */
-const MENTEE_POOL = [
-  { id:'e1', name:'Renate Hoffmann', position:'Teamleitung', dept:'Vertrieb',
-    topics:['Videokonferenzen','Online-Sicherheit','Team-Chat & Messenger'],
-    expTopics:['Kundenbeziehungen & Netzwerk','Verhandlung & Gesprächsführung','Branchen- & Fachwissen'],
-    format:'Persönlich vor Ort', availability:'Vormittags', goal:'Sicher mit Videokonferenzen umgehen.',
-    workStyle:'Strukturiert & planvoll', commStyle:'Persönlich & einfühlsam',
-    interests:['Wandern & Natur','Lesen','Musik & Konzerte'], nextTravel:'Italien' },
-  { id:'e2', name:'Werner Krause', position:'Sachbearbeiter', dept:'Buchhaltung',
-    topics:['Office / Tabellen','Cloud & Dateien teilen','Digitale Signaturen'],
-    expTopics:['Strukturierte Arbeitsweise','Prozess- & Abläufe-Know-how'],
-    format:'Video-Call', availability:'Nachmittags', goal:'Rechnungen digital signieren und ablegen.',
-    workStyle:'Detailorientiert', commStyle:'Ausführlich & erklärend',
-    interests:['Gartenarbeit','Heimwerken','Radfahren'], nextTravel:'Staycation / Zuhause' }
+    interests:['Yoga & Achtsamkeit','Lesen','Wandern & Natur'], nextTravel:'Skandinavien' },
+  { id:'p6', name:'Karl-Heinz Sommer', position:'Meister', dept:'Produktion',
+    teachDigital:[], teachExp:['Prozess- & Abläufe-Know-how','Konfliktlösung','Entscheidungsfindung'],
+    wantDigital:['Team-Chat & Messenger','Smartphone-Apps','KI-Tools'], wantExp:[],
+    strengths:['Problemlösung','Verlässlichkeit','Netzwerk'], format:'Persönlich vor Ort', availability:'Flexibel',
+    workStyle:'Ergebnisorientiert', commStyle:'Kurz & knapp',
+    interests:['Heimwerken','Radfahren','Kochen & Backen'], nextTravel:'Roadtrip / Fernwanderung' },
+  { id:'p7', name:'Gisela Brandt', position:'Assistenz', dept:'Geschäftsleitung',
+    teachDigital:[], teachExp:[],
+    wantDigital:['E-Mail & Kalender','Videokonferenzen','Cloud & Dateien teilen'], wantExp:[],
+    strengths:['Verlässlichkeit','Kundenkontakt'], format:'Flexibel', availability:'Vormittags',
+    workStyle:'Strukturiert & planvoll', commStyle:'Lieber im Gespräch',
+    interests:['Kochen & Backen','Familie','Lesen'], nextTravel:'Spanien' },
+  { id:'p8', name:'Tim Rademacher', position:'Dualer Student', dept:'Einkauf',
+    teachDigital:['Office / Tabellen','Digitale Signaturen','E-Mail & Kalender'], teachExp:[],
+    wantDigital:[], wantExp:[],
+    strengths:['Digitale Affinität','Strukturierte Arbeitsweise'], format:'Flexibel', availability:'Flexibel',
+    workStyle:'Selbstständig', commStyle:'Lieber schriftlich',
+    interests:['Gaming','Sport & Fitness','Reisen'], nextTravel:'Nordamerika' }
 ];
 
 /* Demo-Programmdaten für die HR-Auswertung (mehrere Tandems im Unternehmen).
@@ -108,29 +115,18 @@ const DEMO_TANDEMS = [
   { dept:'Einkauf',     meetingsPlanned:4, meetingsDone:2, goalsTotal:3, goalsAchieved:1, results:0, progress:3.2, confidence:3.0, recommend:false, topics:['Office / Tabellen','Cloud & Dateien teilen'] }
 ];
 
-/* Anonymisierte Programm-Aggregate für die HR-Übersicht (Demo). */
-const DEMO_PEOPLE = { menteesRegistered: 11, mentorsRegistered: 9, matched: 8, waiting: 3 };
-/* Häufigste eingebrachte Stärken/Skills (anonymisiert, programmweit) */
-const DEMO_SKILLS = {
-  'Digitale Affinität': 7, 'Branchenwissen': 6, 'Geduld': 5, 'Strukturierte Arbeitsweise': 5,
-  'Kundenkontakt': 4, 'Kreativität': 4, 'Mentoring-Erfahrung': 3, 'Netzwerk': 3, 'Verlässlichkeit': 3
-};
-/* Selbsteingeschätztes digitales Niveau der Mentees, Verteilung Level 1–5 */
+/* Selbsteingeschätztes digitales Niveau der Mentees, Verteilung Level 1–5 (Demo-Basis) */
 const DEMO_SKILL_LEVELS = { 1: 1, 2: 3, 3: 7, 4: 6, 5: 2 };
 
 /* ---------- State ---------- */
 const blank = {
-  session: null,                 // { role:'oldie'|'mentor', name }
-  menteeProfile: null,           // Profil des Oldies
-  mentorProfile: null,           // Profil des Mentors
-  mentorId: null,                // dem Mentee zugeordnetes Tandem (final)
-  menteeId: null,                // dem Mentor zugeordnetes Tandem (final)
-  mentorMatchBy: null,           // 'hr' | 'wunsch' – wer hat das Mentee-Match gesetzt
-  menteeMatchBy: null,
-  wishMentorId: null,            // Wunsch des Mentees
-  wishMenteeId: null,            // Wunsch des Mentors
-  notices: [],                   // [{ role, type:'match'|'dissolve', text, date, seen }]
-  dissolved: [],                 // [{ role, partnerName, reason, date }] – nur HR sieht Gründe
+  session: null,                 // { role:'user'|'hr', name }
+  profile: null,                 // Personenprofil: teach* (Mentor-Seite) + want* (Mentee-Seite)
+  tandem: null,                  // { partnerId, by:'hr', date } – das eine gemeinsame Tandem
+  wishIds: [],                   // bis zu 3 Wunsch-Partner:innen der lokalen Person
+  demoTandems: [],               // von HR gepaarte Dummy-Tandems [{ id, aId, bId, date }]
+  notices: [],                   // [{ role:'user'|'hr', type:'match'|'dissolve', text, date, seen }]
+  dissolved: [],                 // [{ by, partnerName, reason, date }] – nur HR sieht Gründe
   meetings: [], topics: [], feedback: [], results: [],
   // Onboarding-Event für die Startseite – von HR pflegbar
   event: {
@@ -158,7 +154,6 @@ const fmtDate = iso => new Date(iso).toLocaleDateString('de-DE', { day:'2-digit'
 const dayNum = iso => new Date(iso).toLocaleDateString('de-DE', { day:'2-digit' });
 const monShort = iso => new Date(iso).toLocaleDateString('de-DE', { month:'short' });
 const initials = n => (n||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-const isOldie = () => state.session && state.session.role === 'oldie';
 const isHR = () => state.session && state.session.role === 'hr';
 
 function toast(msg) {
@@ -166,9 +161,25 @@ function toast(msg) {
   clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
-/* current profile = the profile of the logged-in role */
-function myProfile() { return isOldie() ? state.menteeProfile : state.mentorProfile; }
-function setMyProfile(p) { if (isOldie()) state.menteeProfile = p; else state.mentorProfile = p; }
+/* ---------- Personen-Helpers ---------- */
+function myProfile() { return state.profile; }
+function personById(id) { return id === 'me' ? state.profile : PERSON_POOL.find(p => p.id === id); }
+const hasTeachSide = p => !!p && ((p.teachDigital||[]).length + (p.teachExp||[]).length) > 0;
+const hasWantSide  = p => !!p && ((p.wantDigital||[]).length + (p.wantExp||[]).length) > 0;
+const profileFilled = () => hasTeachSide(state.profile) || hasWantSide(state.profile);
+/* Rollen-Badges einer Person: Mentor:in / Mentee / beides */
+function sideBadges(p) {
+  const out = [];
+  if (hasTeachSide(p)) out.push('<span class="role-badge mentor" style="padding:2px 9px;font-size:.72rem">Mentor:in</span>');
+  if (hasWantSide(p)) out.push('<span class="role-badge oldie" style="padding:2px 9px;font-size:.72rem">Mentee</span>');
+  return out.join(' ');
+}
+/* IDs aller Personen, die bereits in einem Tandem stecken (Dummy-Paare + reales Tandem) */
+function takenIds() {
+  const t = new Set(state.demoTandems.flatMap(x => [x.aId, x.bId]));
+  if (state.tandem) { t.add('me'); t.add(state.tandem.partnerId); }
+  return t;
+}
 
 /* ========================================================= */
 /* LOGIN                                                     */
@@ -179,28 +190,18 @@ $('#rolePick').addEventListener('click', e => {
   pickedRole = opt.dataset.role;
   $$('.role-opt').forEach(o => o.classList.toggle('sel', o === opt));
 });
-const ROLE_LABEL = { oldie:'Mentee', mentor:'Mentor', hr:'HR-Personalverantwortliche' };
+const ROLE_LABEL = { user:'Teilnehmer:in', hr:'HR-Personalverantwortliche' };
 $('#loginBtn').addEventListener('click', () => {
   const name = $('#loginName').value.trim();
   if (!pickedRole) { toast('Bitte eine Rolle wählen.'); return; }
   if (!name) { toast('Bitte deinen Namen eingeben.'); return; }
   state.session = { role: pickedRole, name };
-  // Oldie/Mentor: falls noch kein Profil existiert, Namen vorbefüllen. HR hat kein Profil.
-  if (pickedRole !== 'hr' && !myProfile()) setMyProfile({ name, topics: [], strengths: [] });
   save();
   applySession();
   toast('Angemeldet als ' + ROLE_LABEL[pickedRole]);
 });
 $('#logoutBtn').addEventListener('click', () => {
   state.session = null; save(); applySession();
-});
-/* Schnell zwischen eigenem Mentee- und Mentor-Profil wechseln (man ist beides) */
-$('#switchRoleBtn').addEventListener('click', () => {
-  if (!state.session || isHR()) return;
-  state.session.role = isOldie() ? 'mentor' : 'oldie';
-  save();
-  applySession();
-  toast('Ansicht: ' + ROLE_LABEL[state.session.role] + '-Profil');
 });
 
 /* ---------- In-App-Benachrichtigungen ---------- */
@@ -229,24 +230,17 @@ function applySession() {
   $('#loginOverlay').classList.toggle('hide', !!s);
   if (!s) { pickedRole = null; $('#loginName').value=''; $$('.role-opt').forEach(o=>o.classList.remove('sel')); return; }
 
-  const oldie = s.role === 'oldie';
   const hr = s.role === 'hr';
   const ICONS = {
-    oldie: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg> Mentee',
-    mentor:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L3 7l9 5 9-5-9-5z"/></svg> Mentor',
-    hr:    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg> HR'
+    user: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>',
+    hr:   '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg> HR ·'
   };
-  $('#roleBadge').innerHTML = `<span class="role-badge ${s.role}">${ICONS[s.role]} · ${esc(s.name)}</span>`;
-
-  // Profil-Umschalter (Mentee ↔ Mentor) – nur für Teilnehmende, nicht HR
-  const sw = $('#switchRoleBtn');
-  if (hr) { sw.style.display = 'none'; }
-  else { sw.style.display = ''; sw.textContent = oldie ? '⇄ Als Mentor ansehen' : '⇄ Als Mentee ansehen'; }
+  $('#roleBadge').innerHTML = `<span class="role-badge ${s.role}">${ICONS[s.role]} ${esc(s.name)}</span>`;
 
   // In-App-Benachrichtigung für die aktuelle Rolle
   showNotice();
 
-  // Tabs je nach Rolle: HR sieht nur die Auswertungen, Oldie/Mentor den persönlichen Bereich
+  // Tabs je nach Rolle: HR sieht nur die Auswertungen, Teilnehmende den persönlichen Bereich
   const HR_TABS = ['hrtracking','auswertung'];
   const PERSONAL_TABS = ['profil','matching','treffen','austausch','feedback','ergebnisse'];
   $$('#tabs .tab').forEach(t => {
@@ -256,47 +250,19 @@ function applySession() {
 
   if (hr) {
     $('#pageTitle').textContent = 'HR-Auswertung';
-    $('#pageSub').textContent = 'Programmweites Ergebnis-Tracking und Wirkungsmessung der Mentoring-Strategie.';
+    $('#pageSub').textContent = 'Tandems zuordnen, Ergebnis-Tracking und Wirkungsmessung der Mentoring-Strategie.';
     renderAll();
     switchTab('hrtracking');
     return;
   }
 
-  // Labels je nach Rolle anpassen
-  $('#pageTitle').textContent = oldie ? 'Mein Mentoring-Bereich' : 'Mein Mentor-Bereich';
-  $('#pageSub').textContent = oldie
-    ? 'Profil pflegen, Match finden, Treffen planen und Fortschritt festhalten.'
-    : 'Profil pflegen, Mentees begleiten, Treffen planen und Fortschritt festhalten.';
-  $('#profileFormTitle').textContent = oldie ? 'Anmeldung & Profil' : 'Mein Mentor-Profil';
-  $('#topicLabel').textContent = oldie
-    ? 'Worüber möchtest du gern lernen? (digitale Lernwünsche)'
-    : 'Welche digitalen Kompetenzen gibst du weiter?';
-  $('#topicHint').textContent = oldie
-    ? 'Diese Themen lernst du von deinem Mentor / deiner Mentorin.'
-    : 'Diese Themen gibst du an deine Mentees weiter.';
-  $('#expLabel').textContent = oldie
-    ? 'Welches Erfahrungswissen gibst du weiter?'
-    : 'Was möchtest du von erfahrenen Kolleg:innen lernen?';
-  $('#expHint').textContent = oldie
-    ? 'Branchen-, Prozess- & Erfahrungswissen – das lernt dein:e Mentor:in von dir.'
-    : 'Auch du lernst im Tandem – Relational Mentoring ist gegenseitig.';
-  $('#goalLabel').textContent = oldie ? 'Dein Ziel in einem Satz' : 'Womit kannst du am besten unterstützen?';
-  $('#profileSubmit').textContent = oldie ? 'Profil speichern & Matching starten' : 'Profil speichern & Mentees ansehen';
+  $('#pageTitle').textContent = 'Mein Mentoring-Bereich';
+  $('#pageSub').textContent = 'Ein Profil, zwei Seiten: vermitteln und lernen – Treffen planen und Fortschritt festhalten.';
   $('[data-label="matching"]').textContent = 'Match';
-  $('#matchTitle').textContent = oldie ? 'Vorschläge für dein Match' : 'Mögliche Mentees';
-  $('#matchSub').textContent = oldie
-    ? 'Auf Basis deiner Lernwünsche, Stärken, Präferenzen und Verfügbarkeit.'
-    : 'Diese Mentees passen zu deinen Kompetenzen und Präferenzen.';
-  $('#skillLabel').textContent = oldie
-    ? 'Wie sicher fühlst du dich aktuell mit digitalen Tools?'
-    : 'Wie sicher fühlst du dich darin, Wissen zu vermitteln?';
-  $('#needLabel').textContent = oldie
-    ? 'Wie groß ist dein digitaler Lernbedarf?'
-    : 'Wie groß ist dein Interesse, Erfahrungswissen zu lernen?';
 
   renderProfileForm();
   renderAll();
-  switchTab(myProfile() && (myProfile().topics||[]).length ? 'matching' : 'profil');
+  switchTab(profileFilled() ? 'matching' : 'profil');
 }
 
 /* ---------- Tabs ---------- */
@@ -323,24 +289,27 @@ function buildChips(containerId, items, selected) {
 }
 const chipValues = id => $$('#' + id + ' .chip.on').map(c => c.textContent);
 
-/* ---------- Profile ---------- */
+/* ---------- Profile (eine Person, zwei Seiten) ---------- */
 $('#profileForm').addEventListener('submit', e => {
   e.preventDefault();
   const f = e.target;
-  const topics = chipValues('topicChips');
-  if (!topics.length) { toast('Bitte mindestens ein Thema wählen.'); return; }
+  const teachDigital = chipValues('mentorDigChips'), teachExp = chipValues('mentorExpChips');
+  const wantDigital = chipValues('menteeDigChips'), wantExp = chipValues('menteeExpChips');
+  if (!(teachDigital.length + teachExp.length) && !(wantDigital.length + wantExp.length)) {
+    toast('Bitte mindestens ein Thema wählen – als Mentor:in, Mentee oder beides.'); return;
+  }
   const prev = myProfile() || {};
-  setMyProfile({
+  state.profile = {
     name: f.name.value.trim(), department: f.department.value.trim(),
     position: f.position.value.trim(), email: f.email.value.trim(),
-    role: state.session.role, topics, expTopics: chipValues('expChips'),
+    teachDigital, teachExp, wantDigital, wantExp,
     strengths: chipValues('strengthChips'),
     format: f.format.value, availability: f.availability.value, goal: f.goal.value.trim(),
-    interests: chipValues('interestChips'), nextTravel: f.nextTravel.value,
     workStyle: f.workStyle.value, commStyle: f.commStyle.value,
-    // Einschätzung & Match-Status erhalten
+    // "Über dich" (Match-Seite) & Einschätzung erhalten
+    interests: prev.interests || [], nextTravel: prev.nextTravel || '–',
     skillLevel: prev.skillLevel || 0, learningNeed: prev.learningNeed || 0, priorities: prev.priorities || []
-  });
+  };
   save();
   toast('Profil gespeichert ✓');
   switchTab('matching');
@@ -352,100 +321,82 @@ function fillSelect(id, items, sel) {
 }
 function renderProfileForm() {
   const p = myProfile();
-  buildChips('topicChips', TOPICS, p ? (p.topics||[]) : []);
-  buildChips('expChips', EXPERIENCE_TOPICS, p ? (p.expTopics||[]) : []);
+  buildChips('mentorDigChips', TOPICS, p ? (p.teachDigital||[]) : []);
+  buildChips('mentorExpChips', EXPERIENCE_TOPICS, p ? (p.teachExp||[]) : []);
+  buildChips('menteeDigChips', TOPICS, p ? (p.wantDigital||[]) : []);
+  buildChips('menteeExpChips', EXPERIENCE_TOPICS, p ? (p.wantExp||[]) : []);
   buildChips('strengthChips', STRENGTHS, p ? (p.strengths||[]) : []);
   buildChips('interestChips', INTERESTS, p ? (p.interests||[]) : []);
   fillSelect('travelSel', TRAVEL_DESTINATIONS, p ? p.nextTravel : null);
   fillSelect('workStyleSel', WORK_STYLES, p ? p.workStyle : null);
   fillSelect('commStyleSel', COMM_STYLES, p ? p.commStyle : null);
   const f = $('#profileForm');
-  if (!p) { f.reset(); fillSelect('travelSel', TRAVEL_DESTINATIONS); fillSelect('workStyleSel', WORK_STYLES); fillSelect('commStyleSel', COMM_STYLES); return; }
+  if (!p) {
+    f.reset();
+    // Name aus dem Login vorbefüllen
+    if (state.session && state.session.role === 'user') f.name.value = state.session.name;
+    return;
+  }
   f.name.value = p.name || ''; f.department.value = p.department || '';
   f.position.value = p.position || ''; f.email.value = p.email || '';
   f.format.value = p.format || 'Flexibel';
   f.availability.value = p.availability || 'Flexibel'; f.goal.value = p.goal || '';
-  if (p.nextTravel) f.nextTravel.value = p.nextTravel;
   if (p.workStyle) f.workStyle.value = p.workStyle;
   if (p.commStyle) f.commStyle.value = p.commStyle;
 }
 
 function renderProfileSummary() {
   const box = $('#profileSummary'); const p = myProfile();
-  if (!p || !p.topics || !p.topics.length) { box.style.display = 'none'; return; }
-  const oldie = isOldie();
+  if (!p || !profileFilled()) { box.style.display = 'none'; return; }
   box.style.display = 'block';
+  const chips = (arr, styled) => (arr||[]).map(t=>`<span class="mini-tag"${styled?' style="background:var(--green-light);color:var(--green)"':''}>${esc(t)}</span>`).join('');
   box.innerHTML = `
     <div class="row-between">
       <div style="display:flex;gap:14px;align-items:center">
-        <div class="avatar ${oldie?'g':''}">${initials(p.name)}</div>
+        <div class="avatar g">${initials(p.name)}</div>
         <div><b style="font-size:1.1rem">${esc(p.name)}</b>
         <div class="sub" style="margin:0">${esc(p.position||'–')} · ${esc(p.department||'–')}</div></div>
       </div>
-      <span class="role-badge ${state.session.role}">${oldie?'Mentee':'Mentor'}</span>
+      <span>${sideBadges(p)}</span>
     </div>
     <div class="divider"></div>
-    <div class="t-date" style="margin-bottom:6px;font-weight:600;color:var(--ink)">${oldie?'Digitale Lernwünsche':'Digitale Kompetenzen'}</div>
-    <div class="tag-row">${p.topics.map(t=>`<span class="mini-tag">${esc(t)}</span>`).join('')}</div>
-    ${(p.expTopics&&p.expTopics.length)?`
-      <div class="t-date" style="margin:14px 0 6px;font-weight:600;color:var(--ink)">${oldie?'Erfahrungswissen, das ich weitergebe':'Erfahrungswissen, das ich lernen möchte'}</div>
-      <div class="tag-row">${p.expTopics.map(t=>`<span class="mini-tag" style="background:var(--green-light);color:var(--green)">${esc(t)}</span>`).join('')}</div>`:''}
-    ${(p.workStyle||p.commStyle||(p.interests&&p.interests.length)||(p.nextTravel&&p.nextTravel!=='–'))?`
-      <div class="t-date" style="margin:14px 0 6px;font-weight:600;color:var(--ink)">Über mich</div>
-      ${(p.interests&&p.interests.length)?`<div class="tag-row" style="margin-bottom:6px">${p.interests.map(i=>`<span class="mini-tag" style="background:#eaf6ff;color:#1c6aa8">${esc(i)}</span>`).join('')}</div>`:''}
+    ${hasTeachSide(p)?`
+      <div class="t-date" style="margin-bottom:6px;font-weight:600;color:var(--ink)">Ich vermittle</div>
+      <div class="tag-row">${chips(p.teachDigital)} ${chips(p.teachExp, true)}</div>`:''}
+    ${hasWantSide(p)?`
+      <div class="t-date" style="margin:${hasTeachSide(p)?'14px':'0'} 0 6px;font-weight:600;color:var(--ink)">Ich möchte lernen</div>
+      <div class="tag-row">${chips(p.wantDigital)} ${chips(p.wantExp, true)}</div>`:''}
+    ${(p.workStyle||p.commStyle)?`
+      <div class="t-date" style="margin:14px 0 6px;font-weight:600;color:var(--ink)">Präferenzen</div>
       <div class="tag-row">
         ${p.workStyle?`<span class="mini-tag">🧭 ${esc(p.workStyle)}</span>`:''}
         ${p.commStyle?`<span class="mini-tag">💬 ${esc(p.commStyle)}</span>`:''}
-        ${(p.nextTravel&&p.nextTravel!=='–')?`<span class="mini-tag">✈️ ${esc(p.nextTravel)}</span>`:''}
       </div>`:''}
     ${p.goal?`<p style="margin-top:14px;color:var(--muted)"><em>„${esc(p.goal)}"</em></p>`:''}`;
 }
 
-/* ---------- Matching ---------- */
-/* gemeinsame Erfahrungsthemen: was der Oldie weitergibt ∩ was der Mentor lernen will */
-function mutualTopics(oldieGives, mentorWants) {
-  return (oldieGives||[]).filter(t => (mentorWants||[]).includes(t));
-}
+/* ---------- Matching (Person ↔ Person) ---------- */
 /* Gewichtung: priorisierte Faktoren zählen stärker (1.6×), sonst 1× */
 function factorWeight(p, factor) { return (p.priorities||[]).includes(factor) ? 1.6 : 1; }
 function formatFits(a, b) { return a === b || a === 'Flexibel' || b === 'Flexibel'; }
+function inter(a, b) { return (a||[]).filter(x => (b||[]).includes(x)); }
 
-function scoreMentor(p, m) {
-  const W = f => factorWeight(p, f);
+/* Paar-Score aus Sicht von a: get = was a von b lernt, give = was a an b vermittelt.
+   Gegenseitigkeit (beide Richtungen belegt) gibt einen Bonus – das ist der Kern von Relational Mentoring. */
+function pairScore(a, b) {
+  const W = f => factorWeight(a, f);
+  const get  = inter(b.teachDigital, a.wantDigital).concat(inter(b.teachExp, a.wantExp));
+  const give = inter(a.teachDigital, b.wantDigital).concat(inter(a.teachExp, b.wantExp));
   const fit = [];
-  let s = 0;
-  const overlap = m.teaches.filter(t => p.topics.includes(t)).length;
-  s += overlap * 20 * W('Themen-Übereinstimmung');
-  if (overlap) fit.push('Themen');
-  const mutual = mutualTopics(p.expTopics, m.expTopics);
-  s += mutual.length * 7;                     // beidseitiger Lerneffekt
-  if (p.workStyle && p.workStyle === m.workStyle) { s += 9 * W('Arbeitsstil'); fit.push('Arbeitsstil'); }
-  if (p.commStyle && p.commStyle === m.commStyle) { s += 9 * W('Kommunikationsstil'); fit.push('Kommunikation'); }
-  if (formatFits(m.format, p.format)) { s += 9 * W('Verfügbarkeit & Format'); fit.push('Format'); }
-  if (formatFits(m.availability, p.availability)) s += 8 * W('Verfügbarkeit & Format');
-  s += m.strengths.includes('Geduld') ? 5 : 0;
-  return { score: Math.min(99, Math.round(s + 8)), overlap, mutual, fit };
-}
-/* Mentor-Sicht: Wie gut passt ein Mentee zu meinen Kompetenzen + zu meinen Lernzielen */
-function scoreMentee(myP, mentee) {
-  const W = f => factorWeight(myP, f);
-  const fit = [];
-  const overlap = (mentee.topics||[]).filter(t => (myP.topics||[]).includes(t)).length;
-  let s = overlap * 22 * W('Themen-Übereinstimmung') + 12;
-  if (overlap) fit.push('Themen');
-  const mutual = mutualTopics(mentee.expTopics, myP.expTopics);
-  s += mutual.length * 7;
-  if (myP.workStyle && myP.workStyle === mentee.workStyle) { s += 9 * W('Arbeitsstil'); fit.push('Arbeitsstil'); }
-  if (myP.commStyle && myP.commStyle === mentee.commStyle) { s += 9 * W('Kommunikationsstil'); fit.push('Kommunikation'); }
-  if (formatFits(mentee.format, myP.format)) { s += 9 * W('Verfügbarkeit & Format'); fit.push('Format'); }
-  return { score: Math.min(99, Math.round(s)), overlap, mutual, fit };
-}
-
-function computeMatch(autoPick) {
-  const p = state.menteeProfile; if (!p) return [];
-  const ranked = MENTOR_POOL.map(m => ({ m, ...scoreMentor(p, m) })).sort((a, b) => b.score - a.score);
-  if (autoPick && !state.mentorId) state.mentorId = ranked[0].m.id;
-  return ranked;
+  let s = 10;
+  s += Math.min(get.length, 4) * 13 * W('Themen-Übereinstimmung');
+  s += Math.min(give.length, 4) * 10 * W('Themen-Übereinstimmung');
+  if (get.length && give.length) { s += 14; fit.push('Gegenseitig'); }
+  if (a.workStyle && a.workStyle === b.workStyle) { s += 8 * W('Arbeitsstil'); fit.push('Arbeitsstil'); }
+  if (a.commStyle && a.commStyle === b.commStyle) { s += 8 * W('Kommunikationsstil'); fit.push('Kommunikation'); }
+  if (formatFits(a.format, b.format)) { s += 7 * W('Verfügbarkeit & Format'); fit.push('Format'); }
+  if (formatFits(a.availability, b.availability)) s += 6 * W('Verfügbarkeit & Format');
+  return { score: Math.min(99, Math.round(s)), get, give, fit };
 }
 
 /* Gemeinsamkeiten zwischen zwei Personen – als Gesprächsanlässe */
@@ -459,104 +410,94 @@ function commonalities(a, b) {
   return out;
 }
 function renderMatching() {
-  const p = myProfile();
   renderHelpCard();
-  const matchCard = $('#matchCard'), intake = $('#intakeCard'), suggest = $('#suggestCard');
-  if (!p || !(p.topics||[]).length) {
-    matchCard.style.display = 'none'; intake.style.display = ''; suggest.style.display = '';
+  const p = myProfile();
+  const matchCard = $('#matchCard'), about = $('#aboutCard'), intake = $('#intakeCard'), suggest = $('#suggestCard');
+  if (!matchCard) return;
+  if (!p || !profileFilled()) {
+    matchCard.style.display = 'none'; about.style.display = ''; intake.style.display = ''; suggest.style.display = '';
     $('#matchList').innerHTML = emptyState('Bitte zuerst dein Profil ausfüllen.');
     return;
   }
-  const finalId = isOldie() ? state.mentorId : state.menteeId;
-  if (finalId) {
-    matchCard.style.display = ''; intake.style.display = 'none'; suggest.style.display = 'none';
-    renderMatchCard(finalId);
+  if (state.tandem) {
+    matchCard.style.display = ''; about.style.display = ''; intake.style.display = 'none'; suggest.style.display = 'none';
+    renderMatchCard(state.tandem.partnerId);
     return;
   }
-  // Noch kein Match: Vorschläge + Wunsch
-  matchCard.style.display = 'none'; intake.style.display = ''; suggest.style.display = '';
-  const list = $('#matchList');
-  const wishId = isOldie() ? state.wishMentorId : state.wishMenteeId;
-  if (isOldie()) {
-    const ranked = computeMatch(false);
-    list.innerHTML = ranked.map(({ m, score, mutual, fit }) => {
-      const shared = m.teaches.filter(t => p.topics.includes(t));
-      return matchRow({
-        name:m.name, sub:`${m.position} · ${m.dept} · ${m.format}`,
-        tags: shared.length ? shared.slice(0,3) : m.teaches.slice(0,3),
-        score, wished: wishId===m.id, mutual, fit, action:`markWish('${m.id}')`, green:false
-      });
-    }).join('');
-  } else {
-    const pool = [...MENTEE_POOL];
-    if (state.menteeProfile && (state.menteeProfile.topics||[]).length) pool.unshift({ id:'self', ...state.menteeProfile });
-    list.innerHTML = pool.map(mentee => {
-      const { score, mutual, fit } = scoreMentee(p, mentee);
-      const shared = (mentee.topics||[]).filter(t => (p.topics||[]).includes(t));
-      return matchRow({
-        name:mentee.name, sub:`${mentee.position||''} · ${mentee.dept||''}`,
-        tags: shared.length?shared:(mentee.topics||[]).slice(0,3), score, wished: wishId===mentee.id, mutual, fit,
-        action:`markWish('${mentee.id}')`, green:true
-      });
-    }).join('');
-  }
+  // Noch kein Tandem: Vorschläge + Wunsch (ohne "Über dich"-Details der anderen)
+  matchCard.style.display = 'none'; about.style.display = ''; intake.style.display = ''; suggest.style.display = '';
+  const taken = takenIds();
+  const wishes = state.wishIds || [];
+  const cands = PERSON_POOL.filter(x => !taken.has(x.id));
+  const ranked = cands.map(c => ({ c, ...pairScore(p, c) })).sort((a, b) => b.score - a.score);
+  $('#matchList').innerHTML = ranked.length ? ranked.map(({ c, score, get, give, fit }) => matchRow({
+    person: c, score, get, give, fit, wishRank: wishes.indexOf(c.id) + 1
+  })).join('') : emptyState('Aktuell sind alle Kolleg:innen im Pool vergeben.');
+  $('#wishCounter').textContent = `${wishes.length} / 3`;
 }
-function matchRow({name, sub, tags, score, wished, action, green, mutual, fit}) {
-  const mut = (mutual && mutual.length)
-    ? `<div class="tag-row" style="margin-top:6px"><span class="meta" style="font-size:.8rem">↔ Gegenseitig:</span> ${mutual.map(t=>`<span class="mini-tag" style="background:var(--green-light);color:var(--green)">${esc(t)}</span>`).join('')}</div>` : '';
+function dirRow(label, arr, styled) {
+  if (!arr || !arr.length) return '';
+  return `<div class="tag-row" style="margin-top:6px"><span class="meta" style="font-size:.8rem">${label}</span> ${arr.slice(0,3).map(t=>`<span class="mini-tag"${styled?' style="background:var(--green-light);color:var(--green)"':''}>${esc(t)}</span>`).join('')}</div>`;
+}
+function matchRow({person, score, get, give, fit, wishRank}) {
+  const wished = wishRank > 0;
   const fitRow = (fit && fit.length)
     ? `<div class="tag-row" style="margin-top:6px"><span class="meta" style="font-size:.8rem">✓ Passt bei:</span> ${fit.map(t=>`<span class="fit-tag">${esc(t)}</span>`).join('')}</div>` : '';
   return `<div class="match" style="${wished?'border-color:var(--blue);background:#eaf6ff':''}">
-    <div class="avatar ${green?'g':''}">${initials(name)}</div>
+    <div class="avatar g">${initials(person.name)}</div>
     <div class="match-info">
-      <b>${esc(name)}</b> ${wished?'<span class="pill" style="background:#dbeeff;color:#1c6aa8;margin-left:6px">Dein Wunsch</span>':''}
-      <div class="role">${esc(sub)}</div>
-      <div class="tag-row">${tags.map(t=>`<span class="mini-tag">${esc(t)}</span>`).join('')}</div>
+      <b>${esc(person.name)}</b> ${sideBadges(person)} ${wished?`<span class="pill" style="background:#dbeeff;color:#1c6aa8;margin-left:6px">Wunsch ${wishRank}</span>`:''}
+      <div class="role">${esc(person.position||'')} · ${esc(person.dept||'')} · ${esc(person.format||'')}</div>
+      ${dirRow('🌱 Du lernst:', get, false)}
+      ${dirRow('🧭 Du gibst:', give, true)}
       ${fitRow}
-      ${mut}
     </div>
     <div class="score"><div class="num">${score}%</div><div class="lbl">Match</div></div>
-    <button class="btn ${wished?'btn-ghost':'btn-outline'} btn-sm" onclick="${action}">${wished?'Wunsch ✓':'Als Wunsch'}</button>
+    <button class="btn ${wished?'btn-ghost':'btn-outline'} btn-sm" onclick="markWish('${person.id}')">${wished?'✓ Wunsch '+wishRank:'Als Wunsch'}</button>
   </div>`;
 }
-/* Hybrid: Teilnehmende äußern nur einen Wunsch – HR weist final zu */
+/* Hybrid: Teilnehmende äußern bis zu 3 Wünsche – HR weist final zu */
 window.markWish = id => {
-  if (isOldie()) state.wishMentorId = state.wishMentorId === id ? null : id;
-  else state.wishMenteeId = state.wishMenteeId === id ? null : id;
-  const has = isOldie() ? state.wishMentorId : state.wishMenteeId;
+  const w = state.wishIds || (state.wishIds = []);
+  const i = w.indexOf(id);
+  if (i >= 0) { w.splice(i, 1); toast('Wunsch entfernt.'); }
+  else if (w.length >= 3) { toast('Maximal 3 Wünsche – entferne zuerst einen.'); return; }
+  else { w.push(id); toast(`Wunsch ${w.length} von 3 gespeichert – HR berücksichtigt ihn.`); }
   save();
-  toast(has ? 'Wunsch gespeichert – HR berücksichtigt ihn.' : 'Wunsch entfernt.');
 };
 
-/* Match-Detailkarte (zugeordnetes Tandem) */
+/* Match-Detailkarte (zugeordnetes Tandem) – erst hier wird "Über dich" des Gegenübers sichtbar */
 function renderMatchCard(partnerId) {
   const me = myProfile();
-  const partner = isOldie() ? MENTOR_POOL.find(m=>m.id===partnerId)
-    : (partnerId==='self' ? state.menteeProfile : MENTEE_POOL.find(m=>m.id===partnerId));
+  const partner = personById(partnerId);
   if (!partner) { $('#matchCard').style.display='none'; return; }
-  const partnerTopics = isOldie() ? (partner.teaches||[]) : (partner.topics||[]);
+  const { get, give } = pairScore(me, partner);
   const com = commonalities(me, partner);
-  const by = isOldie() ? state.mentorMatchBy : state.menteeMatchBy;
+  const chips = arr => arr.map(t=>`<span class="mini-tag">${esc(t)}</span>`).join('');
   $('#matchCard').innerHTML = `
     <div class="row-between" style="align-items:flex-start">
-      <div><h3 style="margin:0">Dein Match</h3>
-        <p class="sub" style="margin:2px 0 0">${by==='hr' ? 'Von HR zugeordnet auf Basis der Matching-Faktoren.' : 'Bestätigtes Tandem.'}</p></div>
-      ${by==='hr' ? '<span class="pill done">HR-Zuordnung</span>' : ''}
+      <div><h3 style="margin:0">Dein Tandem</h3>
+        <p class="sub" style="margin:2px 0 0">Von HR zugeordnet – Wissen fließt in beide Richtungen.</p></div>
+      <span class="pill done">HR-Zuordnung</span>
     </div>
     <div class="match" style="border-color:var(--green);background:var(--green-light);margin-top:16px">
-      <div class="avatar ${isOldie()?'':'g'}">${initials(partner.name)}</div>
+      <div class="avatar g">${initials(partner.name)}</div>
       <div class="match-info">
-        <b style="font-size:1.15rem">${esc(partner.name)}</b>
-        <span class="role-badge ${isOldie()?'mentor':'oldie'}" style="margin-left:8px;padding:2px 9px;font-size:.72rem">${isOldie()?'Mentor:in':'Mentee'}</span>
+        <b style="font-size:1.15rem">${esc(partner.name)}</b> ${sideBadges(partner)}
         <div class="role">${esc(partner.position||'')} · ${esc(partner.dept||'')} · ${esc(partner.format||'')}</div>
-        <div class="tag-row" style="margin-top:8px">${partnerTopics.slice(0,4).map(t=>`<span class="mini-tag">${esc(t)}</span>`).join('')}</div>
-        ${(partner.interests&&partner.interests.length)?`<div class="tag-row" style="margin-top:6px">${partner.interests.map(i=>`<span class="mini-tag" style="background:#eaf6ff;color:#1c6aa8">${esc(i)}</span>`).join('')}</div>`:''}
+        ${get.length?`<div class="tag-row" style="margin-top:8px"><span class="meta" style="font-size:.8rem">🌱 Du lernst von ${esc(partner.name.split(' ')[0])}:</span> ${chips(get)}</div>`:''}
+        ${give.length?`<div class="tag-row" style="margin-top:6px"><span class="meta" style="font-size:.8rem">🧭 Du gibst weiter:</span> ${chips(give)}</div>`:''}
       </div>
     </div>
     <div class="commons">
-      <div class="t-date" style="font-weight:700;color:var(--ink);margin-bottom:8px">🤝 Gemeinsamkeiten – guter Gesprächseinstieg</div>
-      ${com.length ? `<div class="tag-row">${com.map(c=>`<span class="common-tag">${esc(c)}</span>`).join('')}</div>`
-        : `<p class="meta" style="margin:0">Noch keine direkten Gemeinsamkeiten. Ergänzt euer „Über dich"-Profil für mehr Anknüpfungspunkte.</p>`}
+      <div class="t-date" style="font-weight:700;color:var(--ink);margin-bottom:8px">🤝 Über ${esc(partner.name.split(' ')[0])} – nice to know für euer Kennenlernen</div>
+      <div class="tag-row" style="margin-bottom:8px">
+        ${(partner.interests||[]).map(i=>`<span class="mini-tag" style="background:#eaf6ff;color:#1c6aa8">${esc(i)}</span>`).join('')}
+        ${(partner.nextTravel&&partner.nextTravel!=='–')?`<span class="mini-tag" style="background:#eaf6ff;color:#1c6aa8">✈️ ${esc(partner.nextTravel)}</span>`:''}
+      </div>
+      ${com.length ? `<div class="t-date" style="font-weight:700;color:var(--ink);margin:10px 0 6px">Eure Gemeinsamkeiten</div>
+        <div class="tag-row">${com.map(c=>`<span class="common-tag">${esc(c)}</span>`).join('')}</div>`
+        : `<p class="meta" style="margin:0">Noch keine direkten Gemeinsamkeiten gefunden – vielleicht entdeckt ihr welche im Gespräch. Pflege dein „Über dich" für mehr Anknüpfungspunkte.</p>`}
     </div>
     <div class="divider"></div>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -576,20 +517,32 @@ function renderMatchCard(partnerId) {
 window.openDissolve = () => { const b=$('#dissolveBox'); if(b) b.classList.toggle('open'); };
 window.confirmDissolve = () => {
   const reason = ($('#dissolveReason').value||'').trim();
-  const partnerId = isOldie() ? state.mentorId : state.menteeId;
-  const partner = isOldie() ? MENTOR_POOL.find(m=>m.id===partnerId)
-    : (partnerId==='self' ? state.menteeProfile : MENTEE_POOL.find(m=>m.id===partnerId));
+  const partner = state.tandem ? personById(state.tandem.partnerId) : null;
   state.dissolved.push({
-    id: uid(), role: state.session.role, by: state.session.name,
+    id: uid(), by: state.session.name,
     partnerName: partner ? partner.name : '–',
     reason: reason || '(kein Grund angegeben)', date: new Date().toISOString()
   });
-  if (isOldie()) { state.mentorId = null; state.mentorMatchBy = null; }
-  else { state.menteeId = null; state.menteeMatchBy = null; }
-  addNotice('hr', 'dissolve', `Match aufgelöst von ${state.session.name} (${ROLE_LABEL[state.session.role]}).`);
+  state.tandem = null;
+  addNotice('hr', 'dissolve', `Tandem aufgelöst von ${state.session.name}.`);
   save();
   toast('Match aufgelöst. HR wurde informiert.');
 };
+
+/* ---------- "Über dich": eigene Angaben, sichtbar nur fürs Tandem ---------- */
+$('#aboutForm').addEventListener('submit', e => {
+  e.preventDefault();
+  if (!state.profile) { toast('Bitte zuerst dein Profil anlegen.'); switchTab('profil'); return; }
+  state.profile.interests = chipValues('interestChips');
+  state.profile.nextTravel = e.target.nextTravel.value;
+  save();
+  toast('„Über dich" gespeichert ✓');
+});
+$('#aboutToggle').addEventListener('click', () => {
+  const card = $('#aboutCard');
+  card.classList.toggle('collapsed');
+  $('#aboutToggle').textContent = card.classList.contains('collapsed') ? 'Einblenden' : 'Ausblenden';
+});
 
 /* Hilfe & Kontakt (statischer HR-Kontakt) */
 function renderHelpCard() {
@@ -611,11 +564,10 @@ function renderHelpCard() {
 $('#intakeForm').addEventListener('submit', e => {
   e.preventDefault();
   const p = myProfile();
-  if (!p || !(p.topics||[]).length) { toast('Bitte zuerst dein Profil ausfüllen.'); switchTab('profil'); return; }
+  if (!p || !profileFilled()) { toast('Bitte zuerst dein Profil ausfüllen.'); switchTab('profil'); return; }
   p.skillLevel = +e.target.skillLevel.value || 0;
   p.learningNeed = +e.target.learningNeed.value || 0;
   p.priorities = chipValues('priorityChips');
-  setMyProfile(p);
   save();
   toast('Einschätzung gespeichert – Matching aktualisiert ✓');
 });
@@ -634,15 +586,11 @@ function renderIntake() {
   setStars('rateNeed', p.learningNeed || 0);
 }
 
-function currentMentor() { return MENTOR_POOL.find(m => m.id === state.mentorId); }
-function currentMentee() {
-  if (state.menteeId === 'self') return state.menteeProfile;
-  return MENTEE_POOL.find(m => m.id === state.menteeId);
-}
-/* Partnername aus Sicht der aktuellen Rolle */
+/* Name der Tandem-Partner:in (falls zugeordnet) */
 function partnerName() {
-  if (isOldie()) return currentMentor() ? currentMentor().name : null;
-  return currentMentee() ? currentMentee().name : null;
+  if (!state.tandem) return null;
+  const partner = personById(state.tandem.partnerId);
+  return partner ? partner.name : null;
 }
 
 /* ---------- Meetings + Regeltermine ---------- */
@@ -734,7 +682,7 @@ function renderTopics() {
   list.innerHTML = state.topics.map(t => `
     <div class="list-item">
       <div class="body">
-        <b>${esc(t.title)}</b> <span class="mini-tag">${t.direction==='mentor'?'Mentee → Mentor':'Mentor → Mentee'}</span><br>
+        <b>${esc(t.title)}</b> <span class="mini-tag">${t.direction==='mentor'?'Ich vermittle':'Ich lerne'}</span><br>
         ${t.notes?`<span class="meta">${esc(t.notes)}</span><br>`:''}
         <div style="margin-top:8px;display:flex;gap:6px;align-items:center">
           <span class="meta">Status:</span>
@@ -779,7 +727,7 @@ $('#feedbackForm').addEventListener('submit', e => {
   const refEl = $('#feedbackRef');
   state.feedback.push({
     id: uid(), ref: refEl.options[refEl.selectedIndex]?.text || 'Allgemeiner Eintrag',
-    role: state.session.role, author: state.session.name,
+    direction: f.direction.value, author: state.session.name,
     progress, confidence,
     learned: f.learned.value.trim(), next: f.next.value.trim(),
     programScore: +f.programScore.value || 0, recommend: !!f.recommend.checked,
@@ -801,7 +749,7 @@ function renderFeedback() {
   list.innerHTML = [...state.feedback].reverse().map(fb => `
     <div class="list-item" style="align-items:flex-start">
       <div class="body">
-        <b>${esc(fb.ref)}</b> <span class="role-badge ${fb.role||'oldie'}" style="padding:2px 9px;font-size:.72rem">${(fb.role==='mentor')?'Mentor':'Mentee'}</span>
+        <b>${esc(fb.ref)}</b> <span class="role-badge ${fb.direction==='taught'?'mentor':'oldie'}" style="padding:2px 9px;font-size:.72rem">${fb.direction==='taught'?'Vermittelt':'Gelernt'}</span>
         <div class="t-date">${esc(fb.author||'')} · ${fmtDate(fb.date)}</div>
         <div class="meta" style="margin-top:6px">📈 Fortschritt: ${starStr(fb.progress)} &nbsp; 💪 Sicherheit: ${starStr(fb.confidence)}</div>
         ${fb.learned?`<div class="meta" style="margin-top:6px">📝 ${esc(fb.learned)}</div>`:''}
@@ -857,16 +805,16 @@ function renderFeedbackEval() {
       <div class="dist-bar"><span style="width:${Math.min(100, new Set(fb.map(f=>f.author)).size*20)}%;background:var(--green)"></span></div>
       <span class="val">${new Set(fb.map(f=>f.author)).size}</span></div>`;
 
-  // Nach Perspektive – beide Rollen lernen (Fortschritt & Sicherheit)
-  const oP = fb.filter(f=>f.role==='oldie').map(f=>f.progress||0).filter(Boolean);
-  const oC = fb.filter(f=>f.role==='oldie').map(f=>f.confidence||0).filter(Boolean);
-  const mP = fb.filter(f=>f.role==='mentor').map(f=>f.progress||0).filter(Boolean);
-  const mC = fb.filter(f=>f.role==='mentor').map(f=>f.confidence||0).filter(Boolean);
+  // Nach Perspektive – jede Person lernt UND vermittelt (Richtungs-Tag je Eintrag)
+  const lP = fb.filter(f=>f.direction!=='taught').map(f=>f.progress||0).filter(Boolean);
+  const lC = fb.filter(f=>f.direction!=='taught').map(f=>f.confidence||0).filter(Boolean);
+  const tP = fb.filter(f=>f.direction==='taught').map(f=>f.progress||0).filter(Boolean);
+  const tC = fb.filter(f=>f.direction==='taught').map(f=>f.confidence||0).filter(Boolean);
   $('#byRole').innerHTML =
-    roleBar('Mentees · Fortschritt', oP, false) +
-    roleBar('Mentees · Sicherheit', oC, false) +
-    roleBar('Mentor:innen · Fortschritt', mP, true) +
-    roleBar('Mentor:innen · Sicherheit', mC, true);
+    roleBar('Gelernt · Fortschritt', lP, false) +
+    roleBar('Gelernt · Sicherheit', lC, false) +
+    roleBar('Vermittelt · Fortschritt', tP, true) +
+    roleBar('Vermittelt · Sicherheit', tC, true);
 
   // Stimmen aus dem Lernjournal (qualitativ)
   const voices = fb.filter(f=>f.learned).map(f=>f.learned);
@@ -880,8 +828,7 @@ function renderFeedbackEval() {
 function localTandem() {
   const active = state.meetings.length || state.topics.length || state.results.length || state.feedback.length;
   if (!active) return null;
-  const dept = (state.menteeProfile && state.menteeProfile.department)
-            || (state.mentorProfile && state.mentorProfile.department) || 'Mein Tandem';
+  const dept = (state.profile && state.profile.department) || 'Mein Tandem';
   const prog = state.feedback.map(f=>f.progress||0).filter(Boolean);
   const conf = state.feedback.map(f=>f.confidence||0).filter(Boolean);
   return {
@@ -894,7 +841,7 @@ function localTandem() {
     progress: prog.length?avg(prog):0,
     confidence: conf.length?avg(conf):0,
     recommend: state.feedback.some(f=>f.recommend),
-    topics: ((state.menteeProfile&&state.menteeProfile.topics)||[]).slice(0,2)
+    topics: ((state.profile&&state.profile.wantDigital)||[]).slice(0,2)
   };
 }
 function barRow(label, val, max, green) {
@@ -908,57 +855,94 @@ function scaleRow(label, v, green) {
     <div class="dist-bar"><span style="width:${v/5*100}%${green?';background:var(--green)':''}"></span></div>
     <span class="val">${v?v.toFixed(1):'–'}</span></div>`;
 }
-/* ---------- HR-Matchmaker: zentrale Zuordnung (Hybrid) ---------- */
-function mmBlock(side, title, dept, cands, wishId) {
+/* ---------- HR-Matchmaker: Personen paaren (volle Sandbox) ---------- */
+/* Alle ungematchten Personen: Dummy-Pool + reales Profil (id 'me') */
+function openPersons() {
+  const taken = takenIds();
+  const list = PERSON_POOL.filter(p => !taken.has(p.id));
+  if (state.profile && profileFilled() && !state.tandem) {
+    list.unshift(Object.assign({ id:'me', dept: state.profile.department }, state.profile));
+  }
+  return list;
+}
+function mmBlock(person, cands) {
+  const isMe = person.id === 'me';
   return `<div class="mm-block">
-    <div class="mm-head"><b>${esc(title)}</b> <span class="meta">${esc(dept||'')}</span></div>
+    <div class="mm-head"><b>${esc(person.name)}</b> ${sideBadges(person)} <span class="meta">${esc(person.dept||'')}${isMe?' · echtes Profil':''}</span></div>
     <div class="mm-cands">
-      ${cands.slice(0,4).map(c=>`<div class="mm-cand">
-        <div><b>${esc(c.name)}</b> ${wishId===c.id?'<span class="pill" style="background:#dbeeff;color:#1c6aa8">Wunsch</span>':''}
-          <div class="meta">${esc(c.sub)}</div></div>
+      ${cands.slice(0,3).map(c=>`<div class="mm-cand">
+        <div><b>${esc(c.p.name)}</b> ${sideBadges(c.p)} ${c.wish?'<span class="pill" style="background:#dbeeff;color:#1c6aa8">Wunsch</span>':''}
+          <div class="meta">${esc(c.p.position||'')} · ${esc(c.p.dept||'')}${c.mutual?' · ↔ gegenseitig':''}</div></div>
         <div style="display:flex;align-items:center;gap:12px"><span class="mm-score">${c.score}%</span>
-          <button class="btn btn-primary btn-sm" onclick="hrAssign('${side}','${c.id}')">Zuweisen</button></div>
+          <button class="btn btn-primary btn-sm" onclick="hrAssign('${person.id}','${c.p.id}')">Zuweisen</button></div>
       </div>`).join('')}
     </div>
   </div>`;
 }
 function renderMatchmaker() {
   const box = $('#matchmaker'); if (!box) return;
-  const blocks = [];
-  const mp = state.menteeProfile, tp = state.mentorProfile;
-  if (mp && (mp.topics||[]).length && !state.mentorId) {
-    const ranked = MENTOR_POOL.map(m=>({m, ...scoreMentor(mp, m)})).sort((a,b)=>b.score-a.score);
-    blocks.push(mmBlock('mentee', mp.name + ' · Mentee', mp.department,
-      ranked.map(r=>({ id:r.m.id, name:r.m.name, sub:`${r.m.position} · ${r.m.dept}`, score:r.score })), state.wishMentorId));
-  }
-  if (tp && (tp.topics||[]).length && !state.menteeId) {
-    const pool = [...MENTEE_POOL];
-    if (mp && (mp.topics||[]).length) pool.unshift({ id:'self', ...mp });
-    const ranked = pool.map(e=>({e, ...scoreMentee(tp, e)})).sort((a,b)=>b.score-a.score);
-    blocks.push(mmBlock('mentor', tp.name + ' · Mentor', tp.department,
-      ranked.map(r=>({ id:r.e.id, name:r.e.name, sub:`${r.e.position||''} · ${r.e.dept||''}`, score:r.score })), state.wishMenteeId));
-  }
+  const open = openPersons();
+  const blocks = open.map(person => {
+    const cands = open.filter(o => o.id !== person.id)
+      .map(o => {
+        const s = pairScore(person, o);
+        const w = state.wishIds || [];
+        return { p: o, score: s.score, mutual: s.get.length && s.give.length,
+          wish: (person.id === 'me' && w.includes(o.id)) || (o.id === 'me' && w.includes(person.id)) };
+      })
+      .sort((a, b) => b.score - a.score);
+    return cands.length ? mmBlock(person, cands) : '';
+  }).filter(Boolean);
   box.innerHTML = blocks.length ? blocks.join('')
-    : '<p class="meta">Keine offenen Zuordnungen. Sobald sich Teilnehmende anmelden und noch kein Match haben, erscheinen sie hier zur Zuordnung.</p>';
+    : '<p class="meta">Keine offenen Zuordnungen – alle registrierten Personen sind in einem Tandem.</p>';
+  renderMmActive();
 }
-window.hrAssign = (side, partnerId) => {
-  if (side === 'mentee') {
-    state.mentorId = partnerId; state.mentorMatchBy = 'hr'; state.wishMentorId = null;
-    const nm = (MENTOR_POOL.find(m=>m.id===partnerId)||{}).name || 'deine:n Mentor:in';
-    addNotice('oldie', 'match', `Neues Match: Du wurdest ${nm} zugeordnet. Details im Match-Tab.`);
+window.hrAssign = (aId, bId) => {
+  if (aId === 'me' || bId === 'me') {
+    const partnerId = aId === 'me' ? bId : aId;
+    state.tandem = { partnerId, by: 'hr', date: new Date().toISOString() };
+    state.wishIds = [];
+    const nm = (personById(partnerId)||{}).name || 'deine Tandem-Partner:in';
+    addNotice('user', 'match', `Neues Tandem: Du wurdest ${nm} zugeordnet. Details im Match-Tab.`);
   } else {
-    state.menteeId = partnerId; state.menteeMatchBy = 'hr'; state.wishMenteeId = null;
-    const nm = partnerId==='self' ? (state.menteeProfile||{}).name : (MENTEE_POOL.find(m=>m.id===partnerId)||{}).name;
-    addNotice('mentor', 'match', `Neues Match: Du begleitest ${nm||'eine:n Mentee'}. Details im Match-Tab.`);
+    state.demoTandems.push({ id: uid(), aId, bId, date: new Date().toISOString() });
   }
   save();
-  toast('Match zugewiesen – die Beteiligten wurden benachrichtigt.');
+  toast('Tandem zugewiesen – die Beteiligten wurden benachrichtigt.');
+};
+/* Aktive Tandems (inkl. Lösen) – Sandbox für HR */
+function renderMmActive() {
+  const el = $('#mmActive'); if (!el) return;
+  const rows = [];
+  if (state.tandem) {
+    const partner = personById(state.tandem.partnerId);
+    rows.push(`<div class="mm-cand"><div><b>${esc((state.profile||{}).name||'Du')} ↔ ${esc(partner?partner.name:'?')}</b>
+      <div class="meta">echtes Tandem · seit ${fmtDate(state.tandem.date)}</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="hrDissolve('me')">Lösen</button></div>`);
+  }
+  state.demoTandems.forEach(t => {
+    const a = personById(t.aId), b = personById(t.bId);
+    rows.push(`<div class="mm-cand"><div><b>${esc(a?a.name:'?')} ↔ ${esc(b?b.name:'?')}</b>
+      <div class="meta">seit ${fmtDate(t.date)}</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="hrDissolve('${t.id}')">Lösen</button></div>`);
+  });
+  el.innerHTML = rows.length ? `<div class="mm-cands">${rows.join('')}</div>` : '<p class="meta">Noch keine Tandems zugeordnet.</p>';
+}
+window.hrDissolve = id => {
+  if (id === 'me') {
+    state.tandem = null;
+    addNotice('user', 'dissolve', 'Dein Tandem wurde von HR aufgelöst. Du erhältst bald eine neue Zuordnung.');
+  } else {
+    state.demoTandems = state.demoTandems.filter(t => t.id !== id);
+  }
+  save();
+  toast('Tandem gelöst.');
 };
 function renderDissolved() {
   const el = $('#dissolvedList'); if (!el) return;
   if (!state.dissolved.length) { el.innerHTML = '<p class="meta">Keine aufgelösten Matches.</p>'; return; }
   el.innerHTML = [...state.dissolved].reverse().map(d=>`<div class="list-item" style="align-items:flex-start">
-    <div class="body"><b>${esc(d.by)}</b> <span class="role-badge ${d.role}" style="padding:2px 9px;font-size:.72rem">${ROLE_LABEL[d.role]}</span> · Partner: ${esc(d.partnerName)}
+    <div class="body"><b>${esc(d.by)}</b> · Partner: ${esc(d.partnerName)}
       <div class="t-date">${fmtDate(d.date)}</div>
       <div class="meta" style="margin-top:6px">📝 Grund: ${esc(d.reason)}</div>
     </div></div>`).join('');
@@ -984,14 +968,16 @@ function renderHRDashboard() {
   const avgProg = meanOf('progress'), avgConf = meanOf('confidence');
   const recRate = Math.round(tandems.filter(t=>t.recommend).length/tandems.length*100);
 
-  // Registrierungs-/Match-Zahlen (auch für den Hero-Bereich gebraucht)
-  const hasMentee = state.menteeProfile && (state.menteeProfile.topics||[]).length;
-  const hasMentor = state.mentorProfile && (state.mentorProfile.topics||[]).length;
-  const mentees = DEMO_PEOPLE.menteesRegistered + (hasMentee ? 1 : 0);
-  const mentors = DEMO_PEOPLE.mentorsRegistered + (hasMentor ? 1 : 0);
-  const matched = DEMO_PEOPLE.matched + ((state.mentorId || state.menteeId) ? 1 : 0);
-  const waiting = Math.max(0, mentees - matched) + Math.max(0, mentors - matched);
-  const matchRate = mentees ? Math.round(matched / mentees * 100) : 0;
+  // Registrierungs-/Match-Zahlen direkt aus dem Personen-Pool (+ echtes Profil)
+  const persons = [...PERSON_POOL];
+  if (state.profile && profileFilled()) persons.push(Object.assign({ id:'me', dept: state.profile.department }, state.profile));
+  const mentees = persons.filter(hasWantSide).length;
+  const mentors = persons.filter(hasTeachSide).length;
+  const taken = takenIds();
+  const inTandem = persons.filter(p => taken.has(p.id)).length;
+  const tandemCount = state.demoTandems.length + (state.tandem ? 1 : 0);
+  const waiting = persons.length - inTandem;
+  const matchRate = persons.length ? Math.round(inTandem / persons.length * 100) : 0;
 
   // Hero: Match-Quote + Verlauf (illustrativer Trend – als Demo-Daten wie der Rest des Programm-Pools)
   const trendShape = [.42, .5, .58, .55, .7, .8, 1];
@@ -999,7 +985,7 @@ function renderHRDashboard() {
     <div class="hr-hero-row">
       <div>
         <div class="hr-hero-num">${matchRate}<span>%</span></div>
-        <div class="hr-hero-sub">${matched} von ${mentees} Mentees gematcht &middot; ${waiting} wartend</div>
+        <div class="hr-hero-sub">${inTandem} von ${persons.length} Personen im Tandem &middot; ${waiting} wartend</div>
       </div>
       <div class="hr-spark">${trendShape.map((f,i)=>`<span class="${i===trendShape.length-1?'hi':''}" style="height:${Math.round(f*40)}px"></span>`).join('')}</div>
     </div>`;
@@ -1062,20 +1048,20 @@ function renderHRDashboard() {
       <span class="dept-rate">${r.rate}%</span>
     </div>`).join('')}</div>`;
 
-  // Skills, Lernbedarfe & Beteiligung (anonymisiert) – Demo + lokales Profil
+  // Skills, Lernbedarfe & Beteiligung (anonymisiert) – aggregiert aus dem Personen-Pool + echtem Profil
   $('#hrPeopleRow').innerHTML = `
-    <div class="stat tone-accent"><div class="big">${mentees}</div><div class="lbl">Mentees (registriert)</div></div>
-    <div class="stat tone-accent"><div class="big">${mentors}</div><div class="lbl">Mentor:innen (registriert)</div></div>
-    <div class="stat tone-success"><div class="big">${matched}</div><div class="lbl">Gematchte Tandems</div></div>
+    <div class="stat tone-accent"><div class="big">${mentees}</div><div class="lbl">Personen mit Mentee-Profil</div></div>
+    <div class="stat tone-accent"><div class="big">${mentors}</div><div class="lbl">Personen mit Mentor:innen-Profil</div></div>
+    <div class="stat tone-success"><div class="big">${tandemCount}</div><div class="lbl">Aktive Tandems</div></div>
     <div class="stat ${waiting>0?'tone-warning':'tone-accent'}"><div class="big">${waiting}</div><div class="lbl">Wartend (ohne Match)</div></div>`;
 
-  const skills = Object.assign({}, DEMO_SKILLS);
-  [state.menteeProfile, state.mentorProfile].forEach(pr => { if (pr) (pr.strengths||[]).forEach(s => skills[s] = (skills[s]||0)+1); });
+  const skills = {};
+  persons.forEach(pr => (pr.strengths||[]).forEach(s => skills[s] = (skills[s]||0)+1));
   const topSkills = Object.entries(skills).sort((a,b)=>b[1]-a[1]).slice(0,7);
   $('#hrSkills').innerHTML = `<div class="skill-tags">${topSkills.map(([s,c])=>`<span class="skill-pill">${esc(s)} <b>${c}</b></span>`).join('')}</div>`;
 
   const levels = Object.assign({}, DEMO_SKILL_LEVELS);
-  if (hasMentee && state.menteeProfile.skillLevel) levels[state.menteeProfile.skillLevel] = (levels[state.menteeProfile.skillLevel]||0)+1;
+  if (state.profile && state.profile.skillLevel) levels[state.profile.skillLevel] = (levels[state.profile.skillLevel]||0)+1;
   const maxLv = Math.max(...[1,2,3,4,5].map(l=>levels[l]||0), 1);
   $('#hrSkillLevels').innerHTML = [5,4,3,2,1].map(l=>`<div class="dist-row"><span class="lbl">${l} ★</span>
     <div class="dist-bar"><span style="width:${(levels[l]||0)/maxLv*100}%;background:var(--green)"></span></div><span class="val">${levels[l]||0}</span></div>`).join('');
