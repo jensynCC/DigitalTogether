@@ -71,12 +71,13 @@
     <div class="nav-eyebrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg> Bereich wählen</div>
     <div class="tabs" id="tabs" role="tablist">
       <button class="tab" data-tab="hrtracking"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg> Ergebnis-Tracking</button>
+      <button class="tab" data-tab="event"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Eventmanagement</button>
+      <button class="tab" data-tab="matchmaker"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Matchmaker</button>
       <button class="tab active" data-tab="profil"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <span data-label="profil">Profil</span></button>
       <button class="tab" data-tab="matching"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg> <span data-label="matching">Matching</span></button>
       <button class="tab" data-tab="treffen"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Treffen <span class="badge-count" id="cntTreffen">0</span></button>
       <button class="tab" data-tab="austausch"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> Wissensaustausch</button>
       <button class="tab" data-tab="feedback"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Lernjournal</button>
-      <button class="tab" data-tab="auswertung"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="7"/><rect x="13" y="6" width="3" height="11"/></svg> Programm-Auswertung</button>
       <button class="tab" data-tab="ergebnisse"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg> Ergebnisse &amp; Tracking</button>
     </div>
 
@@ -336,6 +337,27 @@
             <div class="field"><label>Was möchte ich als Nächstes üben?</label><textarea name="next" placeholder="z. B. Aufzeichnungen anlegen und im Team teilen."></textarea></div>
 
             <div class="divider"></div>
+            <h4 style="margin-bottom:4px">Wirkung fürs Unternehmen</h4>
+            <p class="sub" style="margin-bottom:12px">Anonym aggregiert – hilft HR, den Beitrag zur Strategie sichtbar zu machen.</p>
+            <div class="grid-2" style="gap:22px">
+              <div class="field"><label>Konntest du das Gelernte schon im Arbeitsalltag anwenden?</label>
+                <div class="stars" id="rateTransfer" data-target="transfer">
+                  <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+                </div>
+                <input type="hidden" name="transfer" value="0"/>
+                <div class="hint">1 = noch nicht · 5 = voll im Einsatz</div>
+              </div>
+              <div class="field"><label>Fühlst du dich im Team wertgeschätzt &amp; eingebunden?</label>
+                <div class="stars" id="rateBelonging" data-target="belonging">
+                  <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+                </div>
+                <input type="hidden" name="belonging" value="0"/>
+                <div class="hint">1 = wenig · 5 = sehr</div>
+              </div>
+            </div>
+            <div class="field"><label class="check"><input type="checkbox" name="knowledgeSecured"/> In diesem Austausch wurde wichtiges Wissen weitergegeben oder dokumentiert</label></div>
+
+            <div class="divider"></div>
             <h4 style="margin-bottom:4px">Kurzes Programm-Feedback</h4>
             <p class="sub" style="margin-bottom:12px">Anonym aggregiert – nur damit HR das Programm als Ganzes bewerten kann.</p>
             <div class="field"><label>Wie hilfreich ist das Mentoring-Programm für dich?</label>
@@ -357,26 +379,61 @@
       </div>
     </section>
 
-    <!-- ===== PROGRAMM-AUSWERTUNG (HR-KPIs) ===== -->
-    <section class="panel" id="panel-auswertung">
-      <div class="grid-3" id="fbStatRow" style="margin-bottom:22px"></div>
-      <div class="grid-2">
-        <div class="card">
-          <h3>Sicherheit der Teilnehmenden</h3>
-          <p class="sub">Wie sicher fühlen sich die Teilnehmenden mit dem Gelernten? (Selbsteinschätzung)</p>
-          <div id="distChart" style="margin-top:18px"></div>
-          <div class="divider"></div>
-          <h4 style="margin-bottom:8px">Programm-Kennzahlen für HR</h4>
-          <div id="hrKpis"></div>
+    <!-- ===== HR: EVENTMANAGEMENT ===== -->
+    <section class="panel hr-console" id="panel-event">
+      <div class="hr-intro">
+        <h3>Eventmanagement</h3>
+        <p class="sub" style="margin:0">Pflege das Onboarding-Event, das im interaktiven Bereich der Startseite erscheint.</p>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="row-between">
+          <div>
+            <h3>Onboarding-Event auf der Startseite</h3>
+            <p class="sub" style="margin:0">Diese Angaben erscheinen direkt im interaktiven Event-Bereich der Startseite.</p>
+          </div>
+          <a class="btn btn-ghost btn-sm" href="index.html#event" target="_blank" rel="noopener">Startseite ansehen ↗</a>
         </div>
-        <div class="card">
-          <h3>Lernen in beide Richtungen</h3>
-          <p class="sub">Fortschritt &amp; Sicherheit getrennt nach Mentees und Mentor:innen – beide Seiten lernen.</p>
-          <div id="byRole" style="margin-top:18px"></div>
-          <div class="divider"></div>
-          <h4 style="margin-bottom:8px">Stimmen aus dem Lernjournal</h4>
-          <div id="improveThemes"></div>
-        </div>
+        <form id="eventForm" style="margin-top:18px">
+          <div class="field"><label>Titel des Events</label><input name="title" required placeholder="z. B. Kick-off: Relational Mentoring"/></div>
+          <div class="grid-2" style="gap:14px">
+            <div class="field"><label>Datum (Wann)</label><input type="date" name="date" required/></div>
+            <div class="field"><label>Uhrzeit</label><input type="time" name="time" required/></div>
+          </div>
+          <div class="field"><label>Ort (Wo)</label><input name="location" required placeholder="z. B. Forum (EG) & online via Video-Call"/></div>
+          <div class="field"><label>Zielgruppe</label>
+            <select name="audience">
+              <option>Alle Mitarbeitenden</option>
+              <option>Arbeitserfahrene Mitarbeitende (Mentees)</option>
+              <option>Digital affine Mitarbeitende (Mentor:innen)</option>
+              <option>Neue Tandems</option>
+              <option>Interessierte ohne Tandem</option>
+            </select>
+          </div>
+          <div class="field"><label>Kurzbeschreibung</label><textarea name="desc" placeholder="Worum geht es beim Event? Was erwartet die Teilnehmenden?"></textarea></div>
+          <button class="btn btn-primary btn-block" type="submit">Event speichern &amp; auf Startseite veröffentlichen</button>
+        </form>
+        <div id="eventPreview" style="margin-top:14px"></div>
+      </div>
+    </section>
+
+    <!-- ===== HR: MATCHMAKER ===== -->
+    <section class="panel hr-console" id="panel-matchmaker">
+      <div class="hr-intro">
+        <h3>Matchmaker</h3>
+        <p class="sub" style="margin:0">Ordne Tandems auf Basis der Matching-Faktoren zu und verwalte bestehende Zuordnungen.</p>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h3>Tandems zuordnen</h3>
+        <p class="sub">Du paarst zwei Personen zu einem Tandem – innerhalb des Tandems fließt Wissen in beide Richtungen. Wünsche der Teilnehmenden sind markiert; nach dem Zuweisen werden die Beteiligten benachrichtigt.</p>
+        <div id="matchmaker" style="margin-top:16px"></div>
+        <div class="divider"></div>
+        <h4 style="margin-bottom:8px">Aktive Tandems</h4>
+        <div id="mmActive"></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h3>Aufgelöste Matches <span style="font-weight:400;font-size:.85rem;color:var(--muted)">– vertraulich</span></h3>
+        <p class="sub">Auflösungsgründe der Teilnehmenden sind ausschließlich hier für HR sichtbar.</p>
+        <div id="dissolvedList" style="margin-top:14px"></div>
       </div>
     </section>
 
@@ -410,51 +467,8 @@
         <div id="hrHero"></div>
       </div>
 
-      <div class="card" style="margin-top:16px">
-        <div class="row-between">
-          <div>
-            <h3>Onboarding-Event auf der Startseite</h3>
-            <p class="sub" style="margin:0">Diese Angaben erscheinen direkt im interaktiven Event-Bereich der Startseite.</p>
-          </div>
-          <a class="btn btn-ghost btn-sm" href="index.html#event" target="_blank" rel="noopener">Startseite ansehen ↗</a>
-        </div>
-        <form id="eventForm" style="margin-top:18px">
-          <div class="field"><label>Titel des Events</label><input name="title" required placeholder="z. B. Kick-off: Relational Mentoring"/></div>
-          <div class="grid-2" style="gap:14px">
-            <div class="field"><label>Datum (Wann)</label><input type="date" name="date" required/></div>
-            <div class="field"><label>Uhrzeit</label><input type="time" name="time" required/></div>
-          </div>
-          <div class="field"><label>Ort (Wo)</label><input name="location" required placeholder="z. B. Forum (EG) & online via Video-Call"/></div>
-          <div class="field"><label>Zielgruppe</label>
-            <select name="audience">
-              <option>Alle Mitarbeitenden</option>
-              <option>Arbeitserfahrene Mitarbeitende (Mentees)</option>
-              <option>Digital affine Mitarbeitende (Mentor:innen)</option>
-              <option>Neue Tandems</option>
-              <option>Interessierte ohne Tandem</option>
-            </select>
-          </div>
-          <div class="field"><label>Kurzbeschreibung</label><textarea name="desc" placeholder="Worum geht es beim Event? Was erwartet die Teilnehmenden?"></textarea></div>
-          <button class="btn btn-primary btn-block" type="submit">Event speichern &amp; auf Startseite veröffentlichen</button>
-        </form>
-        <div id="eventPreview" style="margin-top:14px"></div>
-      </div>
-
-      <div class="card" style="margin-top:16px">
-        <h3>Matchmaker – Tandems zuordnen</h3>
-        <p class="sub">Du paarst zwei Personen zu einem Tandem – innerhalb des Tandems fließt Wissen in beide Richtungen. Wünsche der Teilnehmenden sind markiert; nach dem Zuweisen werden die Beteiligten benachrichtigt.</p>
-        <div id="matchmaker" style="margin-top:16px"></div>
-        <div class="divider"></div>
-        <h4 style="margin-bottom:8px">Aktive Tandems</h4>
-        <div id="mmActive"></div>
-      </div>
-
-      <div class="card" style="margin-top:16px">
-        <h3>Aufgelöste Matches <span style="font-weight:400;font-size:.85rem;color:var(--muted)">– vertraulich</span></h3>
-        <p class="sub">Auflösungsgründe der Teilnehmenden sind ausschließlich hier für HR sichtbar.</p>
-        <div id="dissolvedList" style="margin-top:14px"></div>
-      </div>
-      <div class="grid-4" id="hrKpiRow" style="margin:22px 0"></div>
+      <div class="grid-4" id="hrKpiRow" style="margin:22px 0 16px"></div>
+      <div class="grid-3" id="fbStatRow" style="margin-bottom:16px"></div>
       <div class="grid-2">
         <div class="card">
           <h3>Durchführung &amp; Zielerreichung</h3>
@@ -467,9 +481,27 @@
           <div id="hrCompetence" style="margin-top:18px"></div>
         </div>
       </div>
+      <div class="grid-2" style="margin-top:16px">
+        <div class="card">
+          <h3>Sicherheit der Teilnehmenden</h3>
+          <p class="sub">Wie sicher fühlen sich die Teilnehmenden mit dem Gelernten? (Selbsteinschätzung)</p>
+          <div id="distChart" style="margin-top:18px"></div>
+          <div class="divider"></div>
+          <h4 style="margin-bottom:8px">Programm-Kennzahlen aus den Lernjournalen</h4>
+          <div id="hrKpis"></div>
+        </div>
+        <div class="card">
+          <h3>Lernen in beide Richtungen</h3>
+          <p class="sub">Fortschritt &amp; Sicherheit getrennt nach gelernten und vermittelten Einträgen – beide Seiten wachsen.</p>
+          <div id="byRole" style="margin-top:18px"></div>
+          <div class="divider"></div>
+          <h4 style="margin-bottom:8px">Stimmen aus dem Lernjournal</h4>
+          <div id="improveThemes"></div>
+        </div>
+      </div>
       <div class="card" style="margin-top:16px">
-        <h3>Strategische Einzahlung auf die HR-Handlungsfelder</h3>
-        <p class="sub">Welchen Beitrag das Tracking für die vier strategischen Felder belegt.</p>
+        <h3>Strategisches Alignment</h3>
+        <p class="sub">Worauf das Programm strategisch einzahlt – belegt durch die Kennzahlen aus dem Tracking und den Lernjournalen.</p>
         <div class="hrgrid" id="hrFields" style="margin-top:18px"></div>
       </div>
       <div class="grid-2" style="margin-top:16px">

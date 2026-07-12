@@ -514,10 +514,13 @@ img { max-width: 100%; display: block; }
 
 /* HR field mini grid */
 .hrgrid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; margin-top: 26px; }
-.hrfield { background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--green); border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow-sm); }
+.hrfield { position: relative; background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--green); border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow-sm); }
 .hrfield:nth-child(even) { border-left-color: var(--blue); }
-.hrfield h4 { font-size: 1.02rem; margin-bottom: 6px; }
+.hrfield h4 { font-size: 1.02rem; margin-bottom: 6px; padding-right: 64px; }
 .hrfield p { color: var(--muted); font-size: .9rem; margin: 0; }
+.hrfield-kpi { position: absolute; top: 14px; right: 18px; font-size: 1.5rem; font-weight: 800; color: var(--green); line-height: 1; }
+.hrfield:nth-child(even) .hrfield-kpi { color: var(--blue); }
+.hr-console .hrfield-kpi { color: #6ab2e7; }
 
 @media (max-width: 880px) {
   .triad, .hrgrid { grid-template-columns: 1fr; }

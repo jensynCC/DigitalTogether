@@ -104,15 +104,16 @@ const PERSON_POOL = [
 
 /* Demo-Programmdaten für die HR-Auswertung (mehrere Tandems im Unternehmen).
    Das eigene lokale Tandem wird – falls Aktivität vorhanden – ergänzt. */
+/* transfer = Anwendung im Alltag (1–5), belonging = Zugehörigkeit/Klima (1–5), ksRate = Anteil Einträge mit Wissenssicherung (0–1) */
 const DEMO_TANDEMS = [
-  { dept:'Vertrieb',    meetingsPlanned:6, meetingsDone:5, goalsTotal:4, goalsAchieved:3, results:2, progress:4.2, confidence:3.8, recommend:true,  topics:['Videokonferenzen','Online-Sicherheit'] },
-  { dept:'Buchhaltung', meetingsPlanned:4, meetingsDone:4, goalsTotal:3, goalsAchieved:3, results:2, progress:4.6, confidence:4.3, recommend:true,  topics:['Office / Tabellen','Digitale Signaturen'] },
-  { dept:'Marketing',   meetingsPlanned:6, meetingsDone:4, goalsTotal:5, goalsAchieved:3, results:1, progress:3.9, confidence:3.6, recommend:true,  topics:['Social Media','KI-Tools'] },
-  { dept:'Produktion',  meetingsPlanned:5, meetingsDone:3, goalsTotal:4, goalsAchieved:2, results:1, progress:3.5, confidence:3.2, recommend:false, topics:['Smartphone-Apps','Team-Chat & Messenger'] },
-  { dept:'IT',          meetingsPlanned:4, meetingsDone:4, goalsTotal:3, goalsAchieved:3, results:3, progress:4.8, confidence:4.5, recommend:true,  topics:['Cloud & Dateien teilen','KI-Tools'] },
-  { dept:'HR',          meetingsPlanned:5, meetingsDone:4, goalsTotal:4, goalsAchieved:3, results:2, progress:4.1, confidence:4.0, recommend:true,  topics:['E-Mail & Kalender','Videokonferenzen'] },
-  { dept:'Vertrieb',    meetingsPlanned:6, meetingsDone:6, goalsTotal:5, goalsAchieved:4, results:2, progress:4.4, confidence:4.2, recommend:true,  topics:['Online-Sicherheit','KI-Tools'] },
-  { dept:'Einkauf',     meetingsPlanned:4, meetingsDone:2, goalsTotal:3, goalsAchieved:1, results:0, progress:3.2, confidence:3.0, recommend:false, topics:['Office / Tabellen','Cloud & Dateien teilen'] }
+  { dept:'Vertrieb',    meetingsPlanned:6, meetingsDone:5, goalsTotal:4, goalsAchieved:3, results:2, progress:4.2, confidence:3.8, recommend:true,  transfer:4.0, belonging:4.2, ksRate:0.8, topics:['Videokonferenzen','Online-Sicherheit'] },
+  { dept:'Buchhaltung', meetingsPlanned:4, meetingsDone:4, goalsTotal:3, goalsAchieved:3, results:2, progress:4.6, confidence:4.3, recommend:true,  transfer:4.5, belonging:4.4, ksRate:1.0, topics:['Office / Tabellen','Digitale Signaturen'] },
+  { dept:'Marketing',   meetingsPlanned:6, meetingsDone:4, goalsTotal:5, goalsAchieved:3, results:1, progress:3.9, confidence:3.6, recommend:true,  transfer:3.6, belonging:3.9, ksRate:0.6, topics:['Social Media','KI-Tools'] },
+  { dept:'Produktion',  meetingsPlanned:5, meetingsDone:3, goalsTotal:4, goalsAchieved:2, results:1, progress:3.5, confidence:3.2, recommend:false, transfer:3.0, belonging:3.4, ksRate:0.4, topics:['Smartphone-Apps','Team-Chat & Messenger'] },
+  { dept:'IT',          meetingsPlanned:4, meetingsDone:4, goalsTotal:3, goalsAchieved:3, results:3, progress:4.8, confidence:4.5, recommend:true,  transfer:4.7, belonging:4.5, ksRate:1.0, topics:['Cloud & Dateien teilen','KI-Tools'] },
+  { dept:'HR',          meetingsPlanned:5, meetingsDone:4, goalsTotal:4, goalsAchieved:3, results:2, progress:4.1, confidence:4.0, recommend:true,  transfer:4.0, belonging:4.3, ksRate:0.8, topics:['E-Mail & Kalender','Videokonferenzen'] },
+  { dept:'Vertrieb',    meetingsPlanned:6, meetingsDone:6, goalsTotal:5, goalsAchieved:4, results:2, progress:4.4, confidence:4.2, recommend:true,  transfer:4.3, belonging:4.4, ksRate:0.8, topics:['Online-Sicherheit','KI-Tools'] },
+  { dept:'Einkauf',     meetingsPlanned:4, meetingsDone:2, goalsTotal:3, goalsAchieved:1, results:0, progress:3.2, confidence:3.0, recommend:false, transfer:2.8, belonging:3.2, ksRate:0.3, topics:['Office / Tabellen','Cloud & Dateien teilen'] }
 ];
 
 /* Selbsteingeschätztes digitales Niveau der Mentees, Verteilung Level 1–5 (Demo-Basis) */
@@ -241,7 +242,7 @@ function applySession() {
   showNotice();
 
   // Tabs je nach Rolle: HR sieht nur die Auswertungen, Teilnehmende den persönlichen Bereich
-  const HR_TABS = ['hrtracking','auswertung'];
+  const HR_TABS = ['hrtracking','event','matchmaker'];
   const PERSONAL_TABS = ['profil','matching','treffen','austausch','feedback','ergebnisse'];
   $$('#tabs .tab').forEach(t => {
     const show = hr ? HR_TABS.includes(t.dataset.tab) : PERSONAL_TABS.includes(t.dataset.tab);
@@ -730,11 +731,12 @@ $('#feedbackForm').addEventListener('submit', e => {
     direction: f.direction.value, author: state.session.name,
     progress, confidence,
     learned: f.learned.value.trim(), next: f.next.value.trim(),
+    transfer: +f.transfer.value || 0, belonging: +f.belonging.value || 0, knowledgeSecured: !!f.knowledgeSecured.checked,
     programScore: +f.programScore.value || 0, recommend: !!f.recommend.checked,
     date: new Date().toISOString()
   });
   f.reset();
-  ['progress','confidence','programScore'].forEach(t => f[t].value = 0);
+  ['progress','confidence','transfer','belonging','programScore'].forEach(t => f[t].value = 0);
   $$('.stars[data-target] span').forEach(x => x.classList.remove('on'));
   save(); toast('Journal-Eintrag gespeichert ✓');
 });
@@ -752,6 +754,7 @@ function renderFeedback() {
         <b>${esc(fb.ref)}</b> <span class="role-badge ${fb.direction==='taught'?'mentor':'oldie'}" style="padding:2px 9px;font-size:.72rem">${fb.direction==='taught'?'Vermittelt':'Gelernt'}</span>
         <div class="t-date">${esc(fb.author||'')} · ${fmtDate(fb.date)}</div>
         <div class="meta" style="margin-top:6px">📈 Fortschritt: ${starStr(fb.progress)} &nbsp; 💪 Sicherheit: ${starStr(fb.confidence)}</div>
+        ${(fb.transfer||fb.belonging||fb.knowledgeSecured)?`<div class="meta" style="margin-top:4px">${fb.transfer?`🚀 Anwendung: ${starStr(fb.transfer)} `:''}${fb.belonging?`&nbsp; 🤝 Zugehörigkeit: ${starStr(fb.belonging)}`:''}${fb.knowledgeSecured?' &nbsp; 🔒 Wissen gesichert':''}</div>`:''}
         ${fb.learned?`<div class="meta" style="margin-top:6px">📝 ${esc(fb.learned)}</div>`:''}
         ${fb.next?`<div class="meta">➡️ Nächster Schritt: ${esc(fb.next)}</div>`:''}
       </div>
@@ -831,6 +834,8 @@ function localTandem() {
   const dept = (state.profile && state.profile.department) || 'Mein Tandem';
   const prog = state.feedback.map(f=>f.progress||0).filter(Boolean);
   const conf = state.feedback.map(f=>f.confidence||0).filter(Boolean);
+  const tr = state.feedback.map(f=>f.transfer||0).filter(Boolean);
+  const bel = state.feedback.map(f=>f.belonging||0).filter(Boolean);
   return {
     dept, local: true,
     meetingsPlanned: state.meetings.length,
@@ -841,6 +846,9 @@ function localTandem() {
     progress: prog.length?avg(prog):0,
     confidence: conf.length?avg(conf):0,
     recommend: state.feedback.some(f=>f.recommend),
+    transfer: tr.length?avg(tr):0,
+    belonging: bel.length?avg(bel):0,
+    ksRate: state.feedback.length ? state.feedback.filter(f=>f.knowledgeSecured).length/state.feedback.length : 0,
     topics: ((state.profile&&state.profile.wantDigital)||[]).slice(0,2)
   };
 }
@@ -967,6 +975,9 @@ function renderHRDashboard() {
   const goalRate = goalsT ? Math.round(goalsA/goalsT*100) : 0;
   const avgProg = meanOf('progress'), avgConf = meanOf('confidence');
   const recRate = Math.round(tandems.filter(t=>t.recommend).length/tandems.length*100);
+  const avgTransfer = meanOf('transfer'), avgBelong = meanOf('belonging');
+  const transferPct = Math.round(avgTransfer/5*100);
+  const ksPct = Math.round(avg(tandems.map(t=>t.ksRate||0))*100);
 
   // Registrierungs-/Match-Zahlen direkt aus dem Personen-Pool (+ echtes Profil)
   const persons = [...PERSON_POOL];
@@ -1012,13 +1023,13 @@ function renderHRDashboard() {
       <div class="dist-bar"><span style="width:${recRate}%;background:var(--green)"></span></div>
       <span class="val">${recRate}%</span></div>`;
 
-  // Strategische HR-Handlungsfelder
+  // Strategisches Alignment – unterstützte Geschäftsziele, belegt durch Tracking- & Journal-Kennzahlen
   $('#hrFields').innerHTML = [
-    ['Wissensmanagement', `${goalRate}% der Lernziele erreicht – Digital- und Erfahrungswissen wird in beide Richtungen geteilt.`],
-    ['Digitale Transformation', `Ø Sicherheit ${avgConf.toFixed(1)}/5 – Beschäftigte nutzen digitale Tools zunehmend souverän.`],
-    ['Mitarbeitendenbindung', `${recRate}% Weiterempfehlung – Zusammenarbeit auf Augenhöhe stärkt die Bindung.`],
-    ['Inklusion', `${tandems.length} aktive Tandems über Bereiche & Erfahrungsstufen hinweg (3i-Framework).`]
-  ].map(([h,p])=>`<div class="hrfield"><h4>${esc(h)}</h4><p>${esc(p)}</p></div>`).join('');
+    ['Digitale Transformation', `${transferPct}% Anwendungsgrad · Ø Sicherheit ${avgConf.toFixed(1)}/5 – Beschäftigte setzen Gelerntes im Arbeitsalltag ein.`, `${transferPct}%`],
+    ['Wettbewerbsvorteil', `${tandems.length} Tandems bauen unternehmensspezifisches, schwer imitierbares Know-how auf (VRIN).`, `${tandems.length}`],
+    ['Wissenssicherung', `${ksPct}% der Journal-Einträge sichern Wissen · ${results} dokumentierte Ergebnisse – kritisches Wissen bleibt im Haus.`, `${ksPct}%`],
+    ['Unternehmensperformance & Mitarbeitendenbindung', `Ø Zugehörigkeit ${avgBelong.toFixed(1)}/5 · ${recRate}% Weiterempfehlung – sichtbar altersinklusives Klima senkt Fluktuation und steigert Produktivität.`, `${avgBelong.toFixed(1)}`]
+  ].map(([h,p,kpi])=>`<div class="hrfield"><div class="hrfield-kpi">${kpi}</div><h4>${esc(h)}</h4><p>${esc(p)}</p></div>`).join('');
 
   // Nachgefragte Lernthemen
   const tc = {};
